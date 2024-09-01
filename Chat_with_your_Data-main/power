@@ -1,0 +1,40 @@
+import subprocess
+import time
+
+def run_ollama_in_powershell():
+    try:
+        # Path to the ollama executable and command to run
+        executable_path = r'C:/Users/Saad Ali/AppData/Local/Programs/Ollama/ollama.exe'
+        command = f'& "{executable_path}" serve'
+        
+        # PowerShell command to execute the ollama command and capture output
+        powershell_command = f'powershell -NoExit -Command "{command}"'
+
+        # Launch PowerShell and run the command
+        process = subprocess.Popen(
+            powershell_command,
+            shell=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True  # Ensure that output is handled as text
+        )
+
+        # Output the command's stdout and stderr
+        stdout, stderr = process.communicate()
+        if stdout:
+            print("Output:", stdout)
+        if stderr:
+            print("Error:", stderr)
+
+        return process
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
+
+if __name__ == '__main__':
+    # Run the command in PowerShell
+    process = run_ollama_in_powershell()
+
+    # Wait for a moment to allow the command to start
+    if process:
+        time.sleep(10)  # Adjust the time based on how long it takes for `ollama` to start

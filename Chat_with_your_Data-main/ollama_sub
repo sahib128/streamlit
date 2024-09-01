@@ -1,0 +1,92 @@
+import subprocess
+import time
+import requests
+
+# Function to kill all processes with the name 'ollama.exe'
+def kill_all_processes(process_name):
+    try:
+        print(f"Attempting to kill all processes named {process_name}...")
+        # Use taskkill to terminate processes
+        subprocess.run(f'taskkill /IM {process_name} /F', shell=True, check=True)
+        print(f"All processes named {process_name} have been terminated.")
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to terminate processes named {process_name}: {e}")
+
+# Function to check if processes with the name 'ollama.exe' are still running
+def are_processes_running(process_name):
+    try:
+        output = subprocess.check_output(f'tasklist /FI "IMAGENAME eq {process_name}"', shell=True, text=True)
+        return process_name in output
+    except subprocess.CalledProcessError:
+        return False
+
+# Function to repeatedly kill all processes before starting the server
+def kill_processes_repeatedly(process_name, max_retries):
+    for attempt in range(1, max_retries + 1):
+        kill_all_processes(process_name)
+        if not are_processes_running(process_name):
+            print(f"Attempt {attempt}: All {process_name} processes are terminated.")
+        else:
+            print(f"Attempt {attempt}: Some {process_name} processes are still running.")
+        time.sleep(2)  # Wait a moment before next attempt
+
+# Function to start the Ollama server using PowerShell
+def start_ollama_server():
+    try:
+        print("Attempting to start the Ollama server...")
+        # Use a raw string to avoid issues with escape characters
+        command = r'C:/Users/Saad Ali/AppData/Local/Programs/Ollama/ollama.exe serve'
+        # Ensure that 'powershell' is correctly located
+        process = subprocess.Popen(['powershell', '-NoProfile', '-Command', command],
+                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        
+        # Wait for the server to start
+        time.sleep(5)  # Adjust this delay based on how long the server takes to start
+        
+        # Check if the server started successfully
+        try:
+            response = requests.get('http://127.0.0.1:11434/health')  # Adjust endpoint if needed
+            if response.status_code == 200:
+                print("Ollama server is running.")
+                return process
+            else:
+                print("Failed to start Ollama server.")
+                process.terminate()
+                return None
+        except requests.ConnectionError:
+            print("Failed to connect to Ollama server.")
+            process.terminate()
+            return None
+    except PermissionError as e:
+        print(f"PermissionError: {e}")
+        return None
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        return None
+
+# Function to stop the Ollama server
+def stop_ollama_server(process):
+    process.terminate()  # Gracefully terminate the server process
+    process.wait()  # Wait for the process to end
+
+# Main function
+def main():
+    process_name = 'ollama.exe'  # Replace with the actual process name if different
+
+    # Attempt to kill all processes related to 'ollama.exe' three times
+    kill_processes_repeatedly(process_name, max_retries=3)
+
+    # Start the Ollama server
+    server_process = start_ollama_server()
+    if server_process is None:
+        return  # Exit if the server failed to start
+    
+    try:
+        # Your code to interact with the server goes here
+        # For example, making queries to the server, etc.
+        pass
+    finally:
+        stop_ollama_server(server_process)
+
+if __name__ == '__main__':
+    main()

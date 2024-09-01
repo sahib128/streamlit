@@ -1,0 +1,1185 @@
+A machine learning approach for identifying and
+delineating agricultural fields and their multi-
+temporal dynamics using three decades of Landsat data
+Item Type Article
+Authors Li, Ting;Johansen, Kasper;McCabe, Matthew
+Citation Li, T., Johansen, K., & McCabe, M. F. (2022). A machine learning
+approach for identifying and delineating agricultural fields and
+their multi-temporal dynamics using three decades of Landsat
+data. ISPRS Journal of Photogrammetry and Remote Sensing,
+186, 83–101. https://doi.org/10.1016/j.isprsjprs.2022.02.002
+Eprint version Publisher's Version/PDF
+DOI 10.1016/j.isprsjprs.2022.02.002
+Publisher Elsevier BV
+Journal ISPRS Journal of Photogrammetry and Remote Sensing
+Rights © 2022 The Author(s). Published by Elsevier B.V. on behalf of
+International Society for Photogrammetry and Remote Sensing,
+Inc. (ISPRS). This is an open access article under the CC BY-NC-
+ND license (http://creativecommons.org/licenses/by-nc-nd/4.0/).
+Download date 2024-08-13 06:43:37
+Item License http://creativecommons.org/licenses/by-nc-nd/4.0/
+Link to Item http://hdl.handle.net/10754/675574
+
+ISPRSJournalofPhotogrammetryandRemoteSensing186(2022)83–101
+Contents lists available at ScienceDirect
+ISPRS Journal of Photogrammetry and Remote Sensing
+journal homepage: www.elsevier.com/locate/isprsjprs
+A machine learning approach for identifying and delineating agricultural
+fields and their multi-temporal dynamics using three decades of
+Landsat data
+Ting Li*, Kasper Johansen, Matthew F. McCabe*
+Water Desalination and Reuse Center, Division of Biological and Environmental Sciences and Engineering, King Abdullah University of Science and Technology (KAUST),
+Thuwal 23955-6900, Saudi Arabia
+A R T I C L E I N F O A B S T R A C T
+Keywords: High spatial and temporal resolution satellite imagery are essential data for land cover discrimination and
+Center-pivot field mapping of vegetation dynamics, offering insights into the number, extent, and condition of agricultural fields.
+Delineation However, an accurate account of the number, location, and variability of fields can be challenging to obtain in a
+DBSCAN
+timely manner, particularly at scale or in regions where ground-supporting data are not available, limiting the
+Convolution neural networks
+capacity for food production and water use assessment and planning. To bridge this capacity gap, a convolutional
+Spectral clustering
+Random forest neural network approach was adopted and combined with two clustering techniques: the density-based spatial
+clustering of applications with noise (DBSCAN) and spectral clustering, to provide an account of agricultural
+fields and their extent across a region lacking ground based information. A random forest classification was also
+employed to discriminate crop types. Using an annual maximum normalized difference vegetation index (NDVI)
+derived from 2018 Landsat-8 data, the approach was applied to classify the shape and delineate the extent of
+agricultural fields across an agricultural region in Saudi Arabia that had an area under irrigation exceeding
+
+agricultural fields across an agricultural region in Saudi Arabia that had an area under irrigation exceeding
+2,300 km2. When assessed against manually identified center-pivot fields (CPFs), the method achieved 97.4%
+producer’s and 98.0% user’s accuracies on an object basis, and 81.4% producer’s and 85.4% user’s accuracies on
+a pixel basis for identifying non-CPFs (i.e., tree crop plantations and other non-woody crops). The over- and
+under-segmentation error for CPFs was 1.5% and 1.0%, respectively, with intersection over union errors reported
+as being 3.5%. The framework showed stability when retrospectively applied to Landsat data from the year 2000,
+returning 97.5% producer’s and 96.6% user’s accuracies for CPF identification. In order to characterize the
+temporal dynamics of agricultural development over the past three decades, an analysis of field behavior be-
+tween 1988 and 2020 was subsequently undertaken. The analysis indicated that the number of CPFs in the study
+region increased from 45 (covering 20 km2) in 1988 to 5,080 CPFs by 2016 (covering 2,368 km2), followed by a
+recent reduction to 3,700 CPFs in 2020 (covering 1,581 km2). Through the multi-temporal analysis, individual
+fields were able to be characterized in terms of their expansion, contraction and activity throughout the study
+period. Overall, the proposed method was simple to train, efficient in dealing with large datasets, relied on
+limited in-situ records to a very small degree, and has the potential to be applied to larger national scales,
+providing an ongoing assessment of important agroinformatic metrics.
+water, the acreage of agricultural land under irrigation in Saudi Arabia
+Globally, the agricultural sector accounts for more than two-thirds of has seen considerable increases over the last four decades. Although
+global freshwater withdrawals (Pastor et al. 2019). In arid countries published reports indicate that sprinklers account for more than 60% of
+
+global freshwater withdrawals (Pastor et al. 2019). In arid countries published reports indicate that sprinklers account for more than 60% of
+such as Saudi Arabia, that figure can exceed 80%. As most arid-land the water used for irrigation in Saudi Arabia, with center-pivot systems
+fresh-water abstractions are derived from groundwater, the conse- being the dominant irrigation technique (Frenken 2009), that figure
+quence can be significant declines in groundwater levels and water likely underestimates the actual amount and volume (Lo´pez Valencia
+* Corresponding author.
+E-mail address: ting.li@kaust.edu.sa (T. Li).
+https://doi.org/10.1016/j.isprsjprs.2022.02.002
+Received 24 September 2021; Received in revised form 8 December 2021; Accepted 4 February 2022
+Availableonline15February2022
+0924-2716/©2022TheAuthor(s). PublishedbyElsevierB.V.onbehalfofInternationalSocietyforPhotogrammetryandRemoteSensing,Inc. (ISPRS).Thisisan
+openaccessarticleundertheCCBY-NC-NDlicense(http://creativecommons.org/licenses/by-nc-nd/4.0/).
+
+T. Li et al. I S P R S J o u r n a l o f P h o t o g r a m m e t r y a n d R e m o t e S e n s i n g186(2022)83–101
+et al. 2020). More generally, as in many developing regions of the world, planted with perennial crops.
+there is a lack of basic information on crop dynamics, acreage, and even In recent times, machine- and deep-learning techniques have become
+the number of center-pivot fields (CPFs). Such information forms the the state-of-the-art in solving agricultural-related segmentation prob-
+foundation of food- and water-security related studies, including the lems (Lebourgeois et al. 2017; Masoud et al. 2020). Most machine
+quantification of crop water use (Aragon et al. 2018; Melton et al. 2012) learning algorithms can be broadly classified as unsupervised or su-
+or crop type identification (Belgiu and Csillik 2018; Li et al. 2015; Pen˜a pervised learning algorithms (Goodfellow et al. 2016). Clustering algo-
+et al. 2014). While improved use of groundwater resources and irriga- rithms, which group data according to the rules within the data itself,
+tion management are required for more sustainable development, this are the most frequently employed approaches for unsupervised learning
+first requires an accurate accounting and assessment of the underlying without a training stage. Density-Based Spatial Clustering of Applica-
+agricultural activity. Apart from providing a needed historical account tions with Noise (DBSCAN) is an unsupervised learning algorithm that
+of agricultural development, annual or semi-annual mapping of CPFs implements clustering based on the density of data points (Ester et al.
+would provide insight into crop dynamics and field conditions and offer 1996). While DBSCAN has been used to segment tree trunks (Tao et al.
+the information required to determine the extent to which current 2015) and identify woody components of trees (Ferrara et al. 2018) with
+
+the information required to determine the extent to which current 2015) and identify woody components of trees (Ferrara et al. 2018) with
+agricultural activity may be complying with policies designed to reduce high accuracies from LiDAR data, no study has yet examined its per-
+the ‘pressure on water’ (Frenken 2009). formance for segmenting agricultural fields within satellite imagery.
+Satellite images have been widely used to delineate agricultural Although DBSCAN can be expected to group image pixels into potential
+fields for decades (Graesser and Ramankutty 2017; Rydberg and Bor- field units, it might struggle to separate pixels from closely connected
+gefors 2001; Song et al. 2009). Indeed, one of the first satellite-based fields. In this case, another approach may be required to segment
+center-pivot monitoring efforts was proposed in the 1970s under adjacent fields. Spectral clustering is a technique that has been widely
+NASA’s University Affairs Program (Rundquist et al. 1989), using used for image segmentation (Shi and Malik 2000; Tung et al. 2010;
+manual interpretation of Landsat-MSS imagery over Nebraska. Zhang et al. 2008), with the technique grouping data based on a simi-
+Following the development of image software tools in the 1990s, larity graph, i.e. a graph where the data points are linked by edges
+numerous studies have manually delineated CPFs by creating masks representing the similarity between each other (Von Luxburg 2007).
+covering each individual field from both aerial and satellite imagery However, the algorithm requires the number of clusters as model input,
+(Bauder 2004; Ferreira et al. 2011; Litts et al. 2001; Seth 2015). While which is generally unknown. As such, it is often impractical to run
+certainly still applicable, such approaches are also laborious, time- spectral clustering on a satellite image in isolation, especially for data
+consuming, and inevitably limited to smaller regions. To improve the consisting of thousands of CPFs.
+
+consuming, and inevitably limited to smaller regions. To improve the consisting of thousands of CPFs.
+scalability of agricultural field mapping, several automated and semi- In a similar vein, convolutional neural networks (CNN) have become
+automated techniques have been proposed to delineate fields, one of the most employed algorithms among the range of deep learning
+including edge-based, region-based, and shape-based techniques techniques. Many advanced CNNs have been developed based on the
+(Mueller et al. 2004; Xia et al. 2018; Zhao et al. 2015). As their name initial CNN architecture, referred to as LeNet (LeCun et al. 1989). These
+suggests, edge-based techniques focus on identifying the pixels repre- evolutions include Alexnet (Krizhevsky et al. 2012), VGGnet (Simonyan
+senting field boundaries in an image. In region-based techniques, the and Zisserman 2014), and U-net (Ronneberger et al. 2015), all of which
+homogeneity criterion between pixels forms the basis of grouping pixels have been successfully applied to the detection of CPFs from satellite
+into objects, whereas shape-based techniques segment the imagery imagery (Saraiva et al. 2020; Zhang et al. 2018). Zhang et al. (2018)
+based on shape features. contributed to one of the first explorations, utilizing Landsat-5 TM to
+Numerous studies have applied various edge-based (Canny 1986) analyze a 20,000 km2 region in northeast Colorado, US. In that study,
+and region-based techniques e.g., multi-resolution segmentation (Baatz the authors compared the performance of three CNN models, including
+2000) and watershed segmentation (Bleau and Leon 2000), to delineate LeNet, Alexnet, and VGGnet, with LeNet outperforming the others,
+agricultural fields within satellite imagery (Duro et al. 2012; Turker and achieving 95.85% user’s and 93.33% producer’s accuracies. However,
+Kok 2013; Vieira et al. 2012). In another approach, Yan and Roy (2016) only the central location of each CPF was identified, with the extent of
+
+Kok 2013; Vieira et al. 2012). In another approach, Yan and Roy (2016) only the central location of each CPF was identified, with the extent of
+utilized one-year of Landsat-5 and 7 time series data together with the each field remaining unmapped. The fully convolutional network (FCN),
+United States Department of Agriculture (USDA) cropland data layer to which has its basis in CNN, is another state of the art approach for
+quantify crop fields over the conterminous United States. When evalu- agricultural field segmentation (Long et al. 2015; Persello et al. 2019).
+ated against reference data, 81.4% of the extracted field objects were Among various types of FCNs, the U-net model is the most frequently
+correctly matched, with field size being underestimated by 1.2% on employed method for identifying CPFs. However, U-net has shown sig-
+average. However, any requirement for crop type information can pre- nificant limitations, including an inability to detect commonly occurring
+sent as an impediment for wider application in regions where such data fan-shaped CPFs, where only a part of a CPF is in use (Saraiva et al.
+are not readily available. Graesser and Ramankutty (2017) proposed a 2020) and the merging of all CPFs into one layer instead of delineating
+method that incorporated multi-spectral image edge extraction, multi- individual fields (de Albuquerque et al. 2020; Graf et al. 2020). Instance
+scale contrast limited adaptive histogram equalization, and adaptive segmentation using the region-based CNNs (e.g. Mask-RCNN) is another
+thresholding to detect cropland field parcels in agricultural landscapes approach that has been applied to delineate CPFs (Carvalho et al. 2021;
+across much of South America. Using Landsat Surface Reflectance de Albuquerque et al. 2021a; de Albuquerque et al. 2021b). While CPFs
+Climate Data Record products the method achieved a 91% f-score. In have been delineated successfully with Mask-RCNN, the need for poly-
+
+Climate Data Record products the method achieved a 91% f-score. In have been delineated successfully with Mask-RCNN, the need for poly-
+another large-scale approach, Johansen et al. (2021) developed an gons masking individual CPFs in the training stage precludes its appli-
+object-based rule set that included edge detection and multiple object cation to regions where such data are not available. Instead of
+shape refinement steps to delineate CPFs across Saudi Arabia. Using employing a single algorithm to delineate CPFs (Mekhalfi et al. 2021;
+Landsat-8 imagery collected over a 3-year period, they achieved a field Tang et al. 2021b), some studies have developed hybrid frameworks
+detection accuracy of 94% for approximately 37,000 fields. Watkins and combining different algorithms for this task. Waldner and Diakogiannis
+van Niekerk (2019) compared a framework combining two edge-based (2020) combined ResUNet-a and watershed segmentation to extract
+and three regional-based techniques to delineate field boundaries in field boundaries using Sentinel-2 image data as input. The method
+South Africa using Sentinel-2 imagery. They found that Canny edge- proposed by Tang et al. (2021a) combining PVANET, GoogLeNet, and
+detection in conjunction with watershed segmentation, provided an the Hough transform only required annotation of the location of a CPF
+overall accuracy of 92.9% against a manually created reference using a rectangular box and whether an image object consisted of CPFs
+boundary dataset. While CPFs were successfully delineated into indi- or non-CPFs. The delineation was conducted by identifying the center
+vidual fields, it was unclear if the method would be feasible for fields point and radius of a CPF obtained from the Hough transform. Although
+84
+
+T. Li et al. I S P R S J o u r n a l o f P h o t o g r a m m e t r y a n d R e m o t e S e n s i n g186(2022)83–101
+incomplete circles, i.e. fan-shaped CPFs, were identified, the boundary individual fields were in use). The motivating goal for this framework
+of these fields was delineated as a full circle, risking an overestimation of was to provide base-level information of relevance to studies exploring
+field acreage. crop type mapping, management of crop water usage, and crop yield
+Since the use of any single algorithm has previously demonstrated prediction, and to propose an approach that could be applied to
+clear limitations for delineating fields, a hybrid machine learning information-sparse regions typical of the developing world.
+framework was explored. By employing a hybrid approach, each of the
+algorithms performs its own specific function, but combine to provide a 2. Study site and data description
+comprehensive solution. Indeed, while a number of machine learning
+models (e.g. FCNs and Mask-CNNs) can learn from the field boundary or 2.1. Study site: the Al Jawf agricultural region in Saudi Arabia
+field mask information in the training dataset (Long et al. 2015; Masoud
+et al. 2020; Persello et al. 2019), such datasets are not always routinely The Al Jawf region in northwest Saudi Arabia is one of the largest
+available (as in Saudi Arabia and most other regions worldwide). agricultural regions in the Kingdom (see Fig. 1). While agricultural
+Manually creating the field boundaries or field mask is a time- development was initiated in the 1980s, it increased rapidly to cover an
+consuming and potentially biased process, albeit one of the most irrigated area larger than 1,500 km2 by 2005 (FAO 2013), with more
+frequent methods used to overcome this training data gap. However, than 90% of the fields being irrigated by abstracted groundwater (Al-
+
+frequent methods used to overcome this training data gap. However, than 90% of the fields being irrigated by abstracted groundwater (Al-
+such manual processing is impractical for large regions or dynamic Rumkhani and Din 2004). Most of the center-pivot systems are generally
+features such as CPFs. Here, we implement an approach that does not uniform in diameter (approximately 800 m) and adjacent to each other
+require field delineation training data by instead identifying the shape of in a well-organized spatial pattern. However, the fields in the north-
+a field object and determining whether or not it consists of multiple western domain are more sporadic, with the field diameter smaller than
+fields: an approach that is both appropriate to the region and considerate those in the central portion of the study site. The most recent crop in-
+of the data that is available. The data required (and available) to drive formation from the General Authority for Statistics in Saudi Arabia
+machine learning approaches is a key consideration in model-choice. In (GASTAT, 2018), indicates that for 2014, the dominant crop types were
+our case, Saudi Arabia is representative of the vast majority of regions cereals (including wheat, millet, broom-corn, maize, barley, and ses-
+outside of the developed world, where even basic agroinformatic data is ame), vegetables (including tomato, potato, marrow, eggplant, okra,
+not routinely available. Ultimately, we seek a compromise between us- carrot, dry onion, cucumber, melon, and watermelon), fodder (mainly
+ability, data availability, and computational efficiency. To identify the clover), and fruit (including dates, citrus, and grapes). The average
+shape of agricultural fields (circle, fan, or others such as plantations), temperature in this region ranges from 10 to 32 ◦C, with the lowest and
+delineate the extent of the fields, and discriminate broad crop types (i.e., highest temperatures occurring in December - January and July -
+
+delineate the extent of the fields, and discriminate broad crop types (i.e., highest temperatures occurring in December - January and July -
+tree crop plantations and other non-woody crops), we propose an August, respectively (Lo´pez Valencia et al. 2020).
+innovative framework to delineate individual fields by employing an
+approach that incorporates four machine learning techniques. The major
+element of this work combines DBSCAN, CNN classification, and spec- 2.2. Landsat data pre-processing
+tral clustering in a stepwise manner to identify and delineate both cir-
+cular and fan shapes agriculture fields using Landsat-8 data. Following To develop a long-term time series of satellite data, imagery from
+this, a random forest (RF) classification model (Belgiu and Dr˘agut¸, 2016; Landsat-4/5 Thematic Mapper (TM), Landsat-7 Enhanced Thematic
+Phalke et al., 2020; Rodriguez-Galiano et al., 2012a,b) was trained and Mapper (ETM+), and Landsat-8 Operational Land Imager (OLI)were
+applied to determine if a non-CPF represented a tree crop plantation or acquired. Level 2 surface reflectance data of 30-m resolution from path/
+other non-woody plant crops. Once the framework was developed and row 172/39 were downloaded from the United States Geological Survey
+tested, a second objective was to apply the approach to a long time series (USGS) EarthExplorer website (https://earthexplorer.usgs.gov/) for the
+of Landsat data: in this case, covering the period from 1988 to 2020. This period covering 1988 to 2020 (note that 1988 was the first year when
+time series analysis allowed an assessment of the change and develop- CPFs were observed within the region). The surface reflectance data
+ment in CPFs over the last three decades, including information on were created by the Land Surface Reflectance Code algorithm (Vermote
+acreage for each field, field expansion or field decrease, as well as et al. 2016) for Landsat-8 imagery and the Landsat Ecosystem Distur-
+
+acreage for each field, field expansion or field decrease, as well as et al. 2016) for Landsat-8 imagery and the Landsat Ecosystem Distur-
+determining the active status of the fields (i.e. the number of years that bance Adaptive Processing System algorithm (Schmidt et al. 2013) for
+the Landsat-4/5 and Landsat-7 imagery. Cloud-contaminated images
+Fig. 1. False-color images of the study site (Landsat-8 path/row 172/39 collected on July 20, 2018). The four yellow rectangles indicate sampling regions to train
+and validate the CNN model. Each region covered 15 ×20 km. The arrows in the bottom right pointed to the north direction of each sampling region.
+85
+
+T. Li et al. I S P R S J o u r n a l o f P h o t o g r a m m e t r y a n d R e m o t e S e n s i n g186(2022)83–101
+Table 1
+The number of available images and selected images after excluding cloud contaminated images for each year (1988–2020) obtained from January 1 to December 31.
+Year Landsat Mission Available images Selected images Year Landsat Mission Available images Selected images Year Landsat Mission Available images Selected images
+1988 Landsat-4/5 TM 21 18 1999 Landsat-5 TM 21 20 2010 Landsat-5 TM 16 15
+1989 Landsat-4/5 TM 15 13 2000 Landsat-5 TM 18 17 2011 Landsat-5 TM 8 8
+1990 Landsat-4/5 TM 17 15 2001 Landsat-5 TM 23 18 2012 Landsat-7 ETM+ 20 18
+1991 Landsat-4/5 TM 20 16 2002 Landsat-7 ETM+ 16 16 2013 Landsat-8 OLI 20 17
+1992 Landsat-5 TM 16 15 2003 Landsat-7 ETM+ 14 13 2014 Landsat-8 OLI 21 17
+1993 Landsat-5 TM 16 12 2004 Landsat-5 TM 19 19 2015 Landsat-8 OLI 23 21
+1994 Landsat-5 TM 18 15 2005 Landsat-5 TM 13 11 2016 Landsat-8 OLI 23 21
+1995 Landsat-5 TM 22 22 2006 Landsat-5 TM 12 9 2017 Landsat-8 OLI 23 23
+1996 Landsat-5 TM 20 18 2007 Landsat-5 TM 12 12 2018 Landsat-8 OLI 23 19
+1997 Landsat-5 TM 21 21 2008 Landsat-5 TM 13 11 2019 Landsat-8 OLI 23 19
+1998 Landsat-5 TM 22 22 2009 Landsat-5 TM 17 15 2020 Landsat-8 OLI 21 18
+were manually excluded (Table 1). Landsat-7 data for 2002, 2003, and (Section 3.4) to discriminate the vegetation cover of non-CPFs (i.e., tree
+2012 were utilized due to the limited availability of Landsat-5 scenes in crop plantations or other non-woody crops). The DBSCAN, spectral
+those years. Co-registration was applied to the satellite scenes using the clustering, and RF classification were implemented using the “Scikit-
+AROSICS python package (https://pypi.org/project/arosics/), learn” Python package (Pedregosa et al. 2011), while the CNN training,
+following the approach of Scheffler et al. (2017). As the Landsat tile validation, and prediction were performed using PyTorch (Mishra
+
+following the approach of Scheffler et al. (2017). As the Landsat tile validation, and prediction were performed using PyTorch (Mishra
+covers slightly different regions, all the scenes were subset to the 2019). The evaluation process is detailed in Section 3.5, while a sum-
+maximum overlap covering 6084 ×6346 pixels. mary of the framework is presented in Section 3.6. The methods for
+NDVI is one of the most frequently employed satellite-based vege- multi-temporal analysis of field dynamics using three decades of Landsat
+tation indices and is used to characterize a variety of vegetation prop- data are described in Section 3.7.
+erties. NDVI maps were computed from the red and near-infrared bands
+for each Landsat scene from 1988 to 2020
+3.1. Density-based spatial clustering of applications with noise (DBSCAN)
+NIR(cid:0) red
+NDVI= (1) clustering
+NIR+red
+DBSCAN is an algorithm that clusters a dataset based on the density
+where NIR and red are the surface reflectance of the near-infrared and
+of data points (or pixels in this particular study). The advantage of
+red bands, respectively. Four maps for each year were obtained by
+DBSCAN is that the clustering is performed based on the density of the
+extracting 1) the maximum, 2) standard derivation, 3) median, and 4)
+points such that no prior knowledge about the number of clusters is
+the difference between the maximum and minimum of the annual NDVI
+required. In addition, the algorithm is efficient at dealing with noise
+time series. The annual maximum NDVI map served as the base map for
+within a dataset since points in regions with low density will be classi-
+the identification and delineation of the fields and all four maps served
+fied as noise and omitted. Two global parameters are set by the user,
+as the input features of RF for crop type classification.
+including the radius (Eps) for a point to search for its neighbors and the
+number of neighbors (MinPts) within Eps (Tan et al. 2006). For a single
+
+including the radius (Eps) for a point to search for its neighbors and the
+number of neighbors (MinPts) within Eps (Tan et al. 2006). For a single
+2.3. Ground truth data pixel, the number of border pixels (neighbors) was four. One cluster in
+DBSCAN is defined as a maximal set of density-connected points or, in
+Two ground truth datasets were prepared to evaluate the perfor- other words, the density of points within a cluster is higher than the
+mance of the framework based on data from the years 2000 and 2018. density of points outside the cluster (Ferrara et al. 2018; Tan et al. 2006).
+The agricultural fields within the study region in both 2000 and 2018 The selection of Eps and MinPts determines if a point is a core, border, or
+were manually delineated using ArcMap based on the respective annual noise point and further affects the clustering result (Tan et al. 2006).
+maximum NDVI maps. Each field was masked by a polygon and was DBSCAN was converted by Campello et al. (2013) into a hierarchical
+labeled as being a circular CPF, a fan-shaped CPF, or other (non-CPFs). clustering algorithm: HDBSCAN, which applies DBSCAN over various
+All fields in 2018, excluding those in the four sampling regions (yellow Eps and finds the most stable clustering result over different Eps. In other
+rectangles in Fig. 1), were used as a ground truth dataset and accounted words, HDBSCAN can find clusters with varying densities, which
+for a total of 3,690 circular CPF covering 1,815 km2, 319 fan-shaped DBSCAN is unable to do (McInnes et al. 2017). While HDBSCAN out-
+fields covering 88 km2, and non-CPFs covering 66.7 km2. In a similar performs DBSCAN from several aspects (Campello et al. 2013), it was
+manner, all fields obtained using Landsat-5 data in 2000 were used as not deemed suitable for this research since the intensity of CPFs in the
+another ground truth dataset to examine the application of the frame- study region showed spatial variation (Fig. 1). Therefore, DBSCAN was
+
+another ground truth dataset to examine the application of the frame- study region showed spatial variation (Fig. 1). Therefore, DBSCAN was
+work to different epochs. In 2000, a total of 1,640 circular fields employed instead of HDBSCAN.
+covering 884 km2, 136 fan-shaped fields covering 28.2 km2, and non- In our study, the data points in DBSCAN represented pixels in a raster
+CPFs covering 43.3 km2 were included. image, i.e., the annual maximum NDVI map. Before running the
+DBSCAN, the annual maximum NDVI map was filtered by a threshold of
+3. Description of the machine learning approaches and NDVI (NDVIthresh) to enhance the difference between the density of
+framework pixels within the agricultural fields and the bare soil background. After
+the filtering, the coordinates of each pixel remaining on the thresholded
+A combination of four machine learning techniques formed the basis annual maximum NDVI map were recorded as row and column loca-
+of the delineation framework. These comprised: 1) DBSCAN (Section tions. By doing so, a two-dimensional da[taset was created t[o repr]e]sent
+3.1) to segment the pixels of the Landsat-based annual maximum NDVI the pixels to be clustered, expressed as [x1,y1],[x2,y2],⋯, xn,yn , in
+map into potential field objects; 2) CNN classification (Section 3.2) to which n was the total number of pixels remaining on the thresholded
+identify the type of field objects (i.e., one circular CPF, one fan-shaped annual maximum NDVI map. Examination of the annual maximum
+CPF, one non-CPF, multiple non-CPFs, merged fields, and noise); 3) NDVI image determined that Eps and MinPts, of 3 and 29, respectively,
+spectral clustering (Section 3.3) to further segment multiple non-CPFs provided a suitable compromise for the study site for the Landsat im-
+and merged fields into individual fields; and 4) RF classification agery. The whole framework was implemented with NDVIthresh =0.25 to
+86
+
+T. Li et al. I S P R S J o u r n a l o f P h o t o g r a m m e t r y a n d R e m o t e S e n s i n g186(2022)83–101
+identify the CPFs first. Then, all pixels identified as CPFs were excluded 3.2. Convolutional neural networks (CNN)
+from the annual maximum NDVI map and another NDVIthresh =0.15 was
+applied to identify and delineate the non-CPFs. NDVIthresh =0.15 was 3.2.1. Architecture of CNN
+used because tree crop plantations in the study region occurred with A CNN is an artificial neural network, a computational approach
+lower annual maximum NDVI values than crops in CPFs, which could inspired by biological neural networks that process the information by
+easily be excluded by NDVIthresh =0.25. However, initial processing with neurons (also referred to as nodes) (Hopfield 1982). The nodes in three
+NDVIthresh = 0.15 for CPFs was not efficient in filtering out the back- layers (i.e., one input layer, several hidden layers, and one output layer)
+ground pixels and hence resulted in CPFs being merged. Therefore, to in the artificial neural networks are connected by modeled weights
+keep and map tree plantation pixels, while also segmenting the CPFs (Schmidhuber 2015). The connections in the networks are updated
+efficiently, two NDVIthresh values were applied. iteratively to minimize the error between the predicted outputs and the
+DBSCAN clustering can result in clusters consisting of a different actual outputs. In this application, we selected Alexnet (Fig. S2) due to
+number of pixels ranging from one to over several thousand. Two its previous success in identifying CPFs within satellite imagery (Zhang
+thresholds were set to identify the “large” clusters (by nhigh) that con- et al. 2018) and simple architecture. The architecture of the Alexnet
+sisted of more than a single CPF, and the “small” clusters (by nlow) that model used in our study reflects that published by Krizhevsky et al.
+
+sisted of more than a single CPF, and the “small” clusters (by nlow) that model used in our study reflects that published by Krizhevsky et al.
+consisted of too few pixels to represent a CPF. The predominant center- (2012) and is shown in Fig. S2.
+pivot system had a diameter of 800 m, covering approximately 550
+Landsat pixels. Although the size of fields varied in the study region, it 3.2.2. Alexnet training and validation
+was reasonable to assume that a cluster consisting of more than nhigh = Alexnet is a supervised learning technique requiring ground truth
+5,000 pixels was formed by multiple fields, while a cluster consisting of labels to train and validate the model. As described in Section 3.1,
+less than nlow = 20 pixels was not a valid field. Small clusters were DBSCAN clustering was performed on the four sampling regions (see
+eliminated from the framework, while large clusters were re-clustered yellow rectanglesin Fig. 1) to obtain representative ground truth data.
+by another four iterations of DBSCAN clustering. Large clusters always The objects obtained after running DBSCAN were labeled as 1–6, rep-
+consisted of pixels from multiple fields with overlapping boundaries. resenting: (1) noisy objects that did not form a valid field, (2) a single
+The pixels along the field edges frequently comprised soil background circular CPF, (3) a single fan CPF (part of the CPF), (4) a single non-CPF,
+and thus had lower NDVI values than pixels fully covered by vegetation. (5) multiple non-CPFs, and (6) merged fields consisting of multiple fields
+The elimination of such areas assisted DBSCAN in clustering multiple (Fig. 2). The objects were mirrored and rotated to different angles (i.e.,
+fields with overlapping boundaries into individual fields. Hence, before 90, 180, and 270 degrees) to balance the number of samples for each
+re-running DBSCAN to segment the large clusters, pixels with NDVI label. To increase the number of samples, small random perturbations
+
+re-running DBSCAN to segment the large clusters, pixels with NDVI label. To increase the number of samples, small random perturbations
+values in the lowest 5% of the cluster were eliminated. were added to or subtracted from the NDVI matrices, while ensuring that
+After running the iterative DBSCAN clustering, pixels within the the values within the matrix only ranged between 0 and 1. In total, 6,125
+thresholded annual maximum NDVI map were clustered into various samples were created for each category, with 70% of these samples
+objects: 1) objects that did not form an agricultural field; 2) a single CPF being randomly selected (from each category) to train the Alexnet
+but with different shape (i.e., circular or fan shape); 3) fields not rep- model, while the remainder was used for validation.
+resenting a circular or fan shape field (non-CPFs); or 4) merged multiple The cross-entropy loss in the Alexnet model was updated by back-
+fields. An m ×n NDVI matrix was created for pixels within each cluster propagation using the mini-batch gradient descent method with the
+with their coordinates. Then, the m ×n matrix was padded to m ×m (if momentum, which is common in CNN training for classification to
+m ≥ n) or n × n (if n > m), with zeros filling the padded cells. The reduce the fluctuation of loss degradation and speed up the model
+squared NDVI matrices served as input to the subsequent CNN classifi- training (Garcia-Garcia et al. 2018). As suggested by Ruder (2016), the
+cation. An example of the DBSCAN clustering procedure is shown in learning rate and momentum coefficient were set to 0.001 and 0.9,
+Fig. S1. respectively. In the first iteration of training, the weights for the
+Fig. 2. Examples of field objects in six categories. Label 1 presented noisy objects that did not form a valid field. Labels 2, 3, and 4 represented a single circular
+
+Fig. 2. Examples of field objects in six categories. Label 1 presented noisy objects that did not form a valid field. Labels 2, 3, and 4 represented a single circular
+center-pivot field (CPF), a single fan-shaped CPF, and a single non-CPF, respectively. Label 5 presented objects consisting of multiple non-CPFs, while Label 6
+characterized objects consisting of merged fields from Labels 1 to 5. These objects were manually labeled for training and validation of the CNN classification model.
+87
+
+T. Li et al. I S P R S J o u r n a l o f P h o t o g r a m m e t r y a n d R e m o t e S e n s i n g186(2022)83–101
+convolutional and fully connected layers in the Alexnet were initialized (Nclu) as input to run the algorithm. In our study, thousands of objects
+by the He initialization (He et al. 2015): a popular weight initialization required re-clustering by the spectral clustering step. A procedure to
+method for ReLu activation functions. Fifty percent of the nodes in the automatically search for the optimal number of clusters of field objects
+first two fully-connected layers were randomly dropped from the consisting of multiple fields (Label 6 in Fig. 2) was explored by assessing
+network to preclude model overfitting, as suggested by Hinton et al. the performance of two indices: the Silhouette coefficient (Rousseeuw
+(2012). 1987) and the Calinski-Harabasz index (Calin´ski and Harabasz 1974),
+Among all the hyperparameters needed to train the Alexnet model, which combine both cohesion and separation of clustering results for
+the mini-batch size was the only one requiring tuning based on our indicating the optimal number of clusters. Our experiment suggested
+parameter selection The general mini-batch size for training a CNN that the Calinski-Harabasz index performed well in predicting the
+model ranges from 2 to 2014, increasing by powers of 2 (Radiuk 2017). optimal number of clusters (result not shown here). However, a list of
+Experiments were conducted with different batch sizes (including 2, 4, Nclu candidates for each object was required to reduce the computational
+8, 16, 32, 64, and 128 images) to find the optimal mini-batch size for our time when searching for the optimal Nclu value. The number of pixels for
+dataset. The training stage stopped when the average loss for 400 each re-clustered object was divided by a threshold value (pthresh), which
+
+dataset. The training stage stopped when the average loss for 400 each re-clustered object was divided by a threshold value (pthresh), which
+consecutive iterations was smaller than 0.005, or the epoch (i.e., the indicated the approximate number of pixels forming a CPF in the study
+number of passes of the entire training dataset by the algorithm) reached region. The value of pthresh was selected based on a CPF with an 800 m
+100. The Alexnet performance was evaluated by the training time and diameter, resulting in approximately 550 Landsat-8 pixels. Relaxed
+four indices that are usually employed to assess a supervised classifi- upper and lower boundaries of the Nclu candidates were required to
+cation algorithm: producer’s accuracy, user’s accuracy, F1, and overall adapt the framework to varying sizes of center-pivot systems. After
+accuracy (Olson and Delen 2008). The four indices are calculated as: testing on the sampling regions, the range of Nclu candidates was set
+Producer accuracy = TP/(TP+ FN), User accuracy = TP/(TP+ FP), based on the following rules:
+F1 = 2/(1/Producer accuracy+ 1/User accuracy), and
+overall accuracy =(TP+TN)/(TP+TN+FP+FN), where TP, FN, FP, if ratio ≤1, Nclu ∈[2,3];
+and TN are the numbers of true positives, false negatives, false positives, if 1 <ratio ≤10, Nclu ∈[2, ⌈(ratio+5)⌉], with ⌈⌉ indicating round up
+and true negatives, respectively. Balancing the model training time and to an integer; and ⌊( )⌋
+accuracy, the experiment suggested that a batch size of 16 was optimal,
+with the producer’s accuracy, user’s accuracy, F1, and overall accuracy
+if ratio > 10, Nclu ∈ [ ra 3tio ,⌈(ratio+5)⌉ ], with ⌊⌋ indicating
+all exceeding 0.99. Thus, the Alexnet model was trained with a batch round down to an integer;
+size of 16 to predict the shape of the fields.
+where ratio = the number of pixels of an object/pthresh. On the other
+3.3. Spectral clustering
+hand, Nclu was constrained to two for re-clustering objects consisting of
+
+where ratio = the number of pixels of an object/pthresh. On the other
+3.3. Spectral clustering
+hand, Nclu was constrained to two for re-clustering objects consisting of
+multiple non-CPFs (Label 5 in Fig. 2) because of the uncertain pixel
+number that formed a non-CPF. This re-clustering for non-CPFs was
+3.3.1. Algorithm of spectral clustering
+necessary since the CNN might classify some objects consisting of CPFs
+Spectral clustering was employed to re-cluster the objects identified
+as non-CPFs. By re-clustering objects that consisted of non-CPFs, CPFs
+as multiple fields by Alexnet (Labels 5 and 6 in Fig. 2) into individual
+could be segmented from the non-CPFs and classified to the correct
+fields. Spectral clustering is a classic approach for clustering non-linear
+dataset based on a similarity graph, which is expressed as G =(V, E, W), category in the subsequent analysis.
+in which V is the set of vertices vi (with each vi representing a data point
+3.3.2. Enhancement of spectral clustering
+xi); E is the set of edges between vi; and W represents the weight for the
+edges (Dhillon et al. 2004). In this study, the normalized spectral clus-
+The optimal Nclu obtained in Section 3.3.1 for label 6 might result in
+tering proposed and described by Ng et al. (2002) was employed. The
+over-segmentation or under-segmentation errors when Nclu was higher
+or lower than the actual number of fields. Procedures were designed to
+weight matrix was formed by the Gaussian kernel function of the
+reduce such errors. Over-segmentation error caused a single circular
+gradient of NDVI values of adjacent pixels, i.e., the difference in NDVI
+field to be segmented into several evenly divided fans, which resulted in
+values of two adjacent pixels, with the weights being zero for nonadja-
+linear boundaries of geographically adjacent clusters. To address this,
+cent pixels, and is expressed as:
+the boundary pixels of two geographically adjacent clusters were
+g2
+
+linear boundaries of geographically adjacent clusters. To address this,
+cent pixels, and is expressed as:
+the boundary pixels of two geographically adjacent clusters were
+g2
+W ij=exp((cid:0) 2σi,j 2) if i∕=j,and W ii=0 (2) c co enu tn cte lud s.
+t
+I ef
+r
+st h ee
+x
+cn eu em deb de r
+a
+o vf
+a
+lb uo eu on fd 8a ,r ty
+h
+ep i Px ee als
+r
+so of
+n
+t cw oo
+r
+rg ee lao tg iora np ch oi ec fa fill cy
+i
+ea nd tj oa f-
+the pixel coordinates (with x and y indicating the rows and columns of
+where Wij was the weight of pixel i and j; gi,j was the difference in NDVI
+pixels in the object) was computed. If that correlation coefficient
+values of pixels i and j; gi,j was the gradient of NDVI values of adjacent
+exceeded a value of 0.8, the two clusters were merged into one cluster.
+pixels; and σ was the standard deviation of the values in the distance These two constraints were selected based on a priori experiment. For
+matrix formed by gi,j. The degree of point xi is the sum of all edge weights under-segmentation error, the algorithm failed to segment pixels from
+between xi and its adjacent data points, and is defined as (Von Luxburg multiple fields into individual fields. Spectral clustering was run mul-
+2007): tiple times to address this problem. Before being re-clustered, pixels with
+∑
+d i= n j=1w ij (3) N thD
+e
+V fiI ev la dl u ee ds
+g
+i en
+,
+t whe
+e
+rl eo w ele is mt i5 n%
+at
+eo df t th oe ac sl su is st te r s,
+p
+p ecri tm raa
+l
+r cil ly
+u
+so tc ec ru inr gri .n Tg ha el o rn eg
+-
+clustering procedure stopped when the iteration reached five, the ob-
+The degree matrix D for a dataset with n data points is a matrix with d1,
+ject with label 5 consisted of less than 500 pixels, or no object was
+d2,d3,⋯,dn on the diagonal. Then the Laplacian matrix is then defined
+predicted as Label 5 or 6 by Alexnet. Three examples of spectral clus-
+as (Von Luxburg 2007):
+tering with different Alextnet predicted labels are shown in Fig. S3.
+L=D(cid:0) W (4)
+3.4. Random forest classification
+
+as (Von Luxburg 2007):
+tering with different Alextnet predicted labels are shown in Fig. S3.
+L=D(cid:0) W (4)
+3.4. Random forest classification
+The target of spectral clustering was to find the eigenvectors with the
+first k smallest eigenvalues by solving Lx =λDx, where k was the target After running the procedures described in Sections 3.1 to 3.3, two
+number of clusters input by the user. labels were assigned to the pixels of the annual maximal NDVI map, i.e.
+Spectral clustering requires the number of clusters to be produced the clustering label for each field and the CNN classification label
+88
+
+T. Li et al. I S P R S J o u r n a l o f P h o t o g r a m m e t r y a n d R e m o t e S e n s i n g186(2022)83–101
+indicating the field shape. The non-CPFs were classified by an RF model pixels of a cluster was better than the pixel-based mask since some of the
+to discriminate if they presented tree crops or other non-woody crops. pixels within the fields might be eliminated during the processing. These
+Four features were employed as the input for the RF model, including eliminated pixels can be recovered when we use polygons to extract all
+the maximum, the standard derivation, the median, and the difference of pixels forming each field from the base maps (e.g., annual maximum
+maximum and minimum of the annual NDVI time series values. NDVI map).
+The framework was evaluated based on the field detection accuracy
+3.4.1. Random forest algorithm and the delineation accuracy. The field detection accuracy was assessed
+RF classification is based upon building a number of individual de- at an object level for circular and fan-shaped CPFs and a pixel level for
+cision trees, with each decision tree constructed by bootstrapping sam- non-CPFs. The pixel-level evaluation was used for non-CPFs because the
+ples from the training dataset with replacement. A random subset or 30 m spatial resolution imagery precluded the detection of field edges
+combination of variables is tested at each tree node to partition the for some of the non-CPFs (but especially for tree crop plantations),
+training data into increasingly homogeneous subsets. The variable resulting in objects consisting of indivisible multiple non-CPFs. The
+subset, which results in the greatest increase in data purity (e.g., highest producer’s accuracy and user’s accuracy were presented to quantify the
+Gini), is chosen for this node (Breiman 2001). After the forest of decision detection accuracy of CPFs. However, the overall accuracy was
+
+Gini), is chosen for this node (Breiman 2001). After the forest of decision detection accuracy of CPFs. However, the overall accuracy was
+trees is constructed, the final classification result is accomplished by excluded, since the framework-delineated fields did not completely
+voting based on all the trees, i.e., each tree will give a label to the input match the fields in the ground truth map due to over- and under-
+data. The label voted by most of the trees would be assigned as the final segmentation errors.
+classification result. The delineation accuracy of CPFs was evaluated by the over-
+segmentation (Sover) and under-segmentation (Sunder) indices described
+3.4.2. Random forest classification model training and validation by Clinton et al. (2010) and utilized by Yan and Roy (2014) for assess-
+Pixels occupied by tree crop plantations and other crops in sampling ment of the field delineation accuracy, which are defined as:
+region 4 (shown in Fig. 1) were manually labeled using Landsat-8 im- ( ⋂ )
+|T E|
+agery in 2018 based on information obtained from a previous in-person S under(E j;T i)= 1(cid:0) ⃒ ⃒i E⃒ ⃒j ×100% (5)
+field survey. A total of 58,000 pixels were selected for each label, and j
+five-fold cross-validation (Schaffer 1993) was applied to select the ( ⋂ )
+o tip ot nim
+,
+ta hl
+e
+i dn ap tu at
+s
+eh ty ip se sr pp la itr a inm toet fier vs
+e
+o sf
+u
+t bh se
+e
+tm
+s.
+o Td he el .
+R
+I Fn mfiv oe d- ef lo il sd tc rr ao inss e- dv a ul si id na g- S over(E j;T i)= 1(cid:0) |T i
+|T
+iE |j| ×100% (6)
+four of the folds and is evaluated on the rest of the data. A grid search
+was applied to identify the optimal combination of the hyperparameters, where Ej represented the pixels from a framework-delineated field and
+including the number of trees ([10, 50, 100, 150, 200, 250, 300]), √th ̅̅e
+̅̅
+Ti included the manually delineated pixels of a field from the ground
+
+including the number of trees ([10, 50, 100, 150, 200, 250, 300]), √th ̅̅e
+̅̅
+Ti included the manually delineated pixels of a field from the ground
+number of variables to consider when looking for the best split ([ N, truth map. If Ej intersected with multiple fields in the ground truth map
+log N], where N is the number of input features) (Breiman 2001), and or Ti intersected with multiple fields on the framework-delineated map,
+2
+the function to measure the quality of a split (‘gini’, ‘entropy’) (Raileanu Equations (5) and (6) were computed only for the field that had the most
+and Stoffel 2004). The combination of the hyperparameters that gave intersecting pixels. Sunion, an index computed from the root mean square
+the highest mean value of overall accuracy in the five-fold cross-vali- of Sunder and Sover, was also employed:
+√̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅
+dation was employed to retrain the model using all the sampling data.
+S2 +S2
+T pah re
+a
+mfiv ee te-f ro sl ed
+t
+c wro as ss [-v 3a 0l 0id
+,
+a loti gon
+N
+,e ’x ep ne tr ri om pe yn ’]t fs ou rg tg he es t ned
+u
+mth ba et
+r
+oth
+f
+e
+t
+reo ep st ,i m tha el S union(i,j)= over(i,j)
+2
+under(i,j) (7)
+2
+number of features when looking for the best split, and the function to
+measure the quality of a split, with a mean overall accuracy of 0.98. The
+Sunder, Sover, and Sunion provide values ranging from 0 to 100%, with a
+value of 0 defining a perfect delineation result and a value of 100%
+RF model was trained on a pixel basis. However, the prediction was
+indicating either a high degree of under-segmentation error, over-
+applied on an object basis since the standard deviation, median, and
+segmentation error, or combined under- and over-segmentation error,
+maximum-minimum difference maps for Landsat-7 data were affected
+respectively. The Intersection over Union (IoU) error (Huang et al. 2020)
+by the SLC-off from May 31, 2003. Pixels affected by the SLC-off error
+was also employed, which is defined as:
+
+respectively. The Intersection over Union (IoU) error (Huang et al. 2020)
+by the SLC-off from May 31, 2003. Pixels affected by the SLC-off error
+was also employed, which is defined as:
+showed extremely low NDVI values and resulted in wrong measures of
+the input features, which would mislead the RF classification when IoU(A,B) error=(1(cid:0) area(A∩B)/area(A∪B))×100% (8)
+identifying the crop types. To overcome this influence, the RF prediction
+from 1988 to 2020 was constructed at the field level using the field For a CPF, A was a mapped field based on the machine learning ap-
+delineation result obtained from Sections 3.1 to 3.3. The median value of proaches, and B represented a ground truth field. The IoU error ranges
+the maximum, the standard deviation, median, and maximum-minimum from 0 to 100%, with a value of 100% indicating an incorrect result and
+difference value of each delineated field was computed based on the a value of 0 indicating a correct result. In addition, four standard sta-
+pixels that were unaffected by the SLC-off error and presented the input tistical metrics frequently employed to evaluate model performance
+feature of the RF classification. were computed based on the area of the fields in the framework-
+delineated map and in the ground truth map. These included the coef-
+ficient of determination (R2), the mean absolute bias deviation (MAD),
+3.5. Evaluation of the framework the relative MAD (rMAD), and relative mean bias deviation (rMBD), with
+the latter two being the absolute or mean bias divided by the mean of the
+As there was no ground-truth data available to actually evaluate the number of pixels of extracted fields.
+output from the RF model, we were unable to identify the crop type (tree
+crop plantation or other crops) of non-CPFs, except for within sampling
+region 4. There were fewer than 70 km2 of fields that were not repre- 3.6. Framework overview
+senting circular or fan-shaped fields over the approximately 1,970 km2
+
+region 4. There were fewer than 70 km2 of fields that were not repre- 3.6. Framework overview
+senting circular or fan-shaped fields over the approximately 1,970 km2
+of the agricultural area in the evaluation region in 2018. Our main focus A summary of the processing workflow is presented in Fig. 3. Using
+was to assess the field identification and delineation results from Sec- annual Landsat surface reflectance imagery as initial input (Step 1), the
+tions 3.1 to 3.3. A shapefile consisting of polygons representing each of annual maximum NDVI map was first developed (Step 2) and then used
+the individual fields was produced. A polygon created by boundary to eliminate pixels with NDVI values below NDVIthresh (=0.25) (Step 3).
+89
+
+T. Li et al. I S P R S J o u r n a l o f P h o t o g r a m m e t r y a n d R e m o t e S e n s i n g186(2022)83–101
+Fig. 3. Schematic of the methodological framework.
+Then, the coordinates of pixels (row and column locations) of the 3.7. Field dynamics analysis from 1988 to 2020
+thresholded NDVI map were obtained and used as input to the DBSCAN
+clustering (Steps 4–6). After that, a pre-trained CNN (Section 3.2.2) The 2018-trained framework was used to identify and delineate the
+model was applied to identify the shape of field objects (clusters) ob- fields in the study region for each year from 1988 to 2020. Firstly, the
+tained from DBSCAN (Step 7). Spectral clustering was applied to re- number of circular and fan-shaped fields for each year was counted. We
+cluster the objects identified as non-CPFs or objects consisting of mul- did not count the number of non-CPFs as the 30 m resolution imagery
+tiple fields (Step 8). After running five iterations of CNN predictions and failed to present the field edge for non-CPFs, especially for tree planta-
+spectral clustering, each pixel will have two types of label, i.e., the CNN tions, resulting in merged plantation fields. Then, the acreage of each
+label (indicating the shape of the field that a pixel belonged to) and the field was obtained by the sum of areas corresponding to the pixels. Pixels
+cluster label (pixels sharing the same cluster label forming a field). forming a CPF with an NDVI value of less than 0.25 were excluded from
+However, tree crop plantations present lower annual maximum NDVI acreage counting. This filtering was conducted as some of the CPFs
+values, which could easily be excluded by the multiple iterations represented donut shapes with no crops grown in the center of the field.
+described above. To address this, a non-CPF annual maximum NDVI The polygon created in the framework covered all the pixels of a CPF
+
+described above. To address this, a non-CPF annual maximum NDVI The polygon created in the framework covered all the pixels of a CPF
+map was created by excluding the pixels identified as CPFs and objects including those with no crops grown. These pixels were excluded when
+consisting of multiple fields (Step 10). Then the non-CPF annual calculating the acreage of a CPF. Thirdly, the delineated fields for every
+maximum NDVI map was smoothed using a 5 ×5 pixels moving window two consecutive years were compared. Herein, if more than 60% of
+to remove noise. After that, Steps 3 to 8 were repeated on the denoised pixels forming a CPF observed in one year were duplicated with pixels
+non-CPF annual maximal NDVI map (starting from thresholding NDVI- forming a CPF observed in the year after, the two CPFs were defined as a
+thresh =0.15). The pre-trained RF model (Section 3.4.2) was then applied duplicated field. Then, the relative bias of field acreage of the duplicated
+to further classify non-CPF crops as either tree crop plantations or non- fields was calculated, which was defined as bias=(Aaf(cid:0) Abf)/Aaf, where
+woody plants (Steps 12 – 13). The final outputs of the framework were af takes its value from [1989, 1990, 1991, …, 2020], bf =af (cid:0) 1, and Aaf
+polygons covering individual fields (delineation result) and field shape and Abf indicated the acreage of a duplicated CPF observed in years bf
+maps showing if a field represented a single circular CPF; a single fan- and af. A field was defined as a “duplicated field” if the intersection of
+shaped CPF; non-CPFs, i.e. tree crop plantations or other non-woody the field acreage in two consecutive years (af and bf) was ≥0.6 Aaf or 0.6
+crops; or merged fields. The parameter settings for the framework are Abf. Based on the duplicated fields, we also identified fields that were
+summarized in Table S1. observed in year af but were not observed in year bf, and vice versus. By
+
+summarized in Table S1. observed in year af but were not observed in year bf, and vice versus. By
+doing so, the field dynamics were quantified on a yearly basis.
+90
+
+T. Li et al. I S P R S J o u r n a l o f P h o t o g r a m m e t r y a n d R e m o t e S e n s i n g186(2022)83–101
+Moreover, the field expansion and contraction maps were obtained by 4. Results
+the earliest and latest (before 2020) detection year of a pixel that formed
+a field. Finally, a CPF was defined as active if the median of annual 4.1. Evaluation of the framework
+maximum NDVI pixel values forming the field exceeded 0.35. For a non-
+CPF pixel, it was identified as active as long as it was detected. The As can be seen from Fig. 4, the field delineation maps indicate that
+number of years that a CPF was detected as active was counted as the framework performed well at detecting the fields using Landsat-8
+relative activity of the fields representing the number of years out of the (2018) and Landsat-5 (2000) imagery. In 2018, 97.4% of the 4,009
+time series that the field was in production. CPFs from the ground truth map were delineated correctly (i.e., pro-
+ducer’s accuracy), while 98.0% of the 3,983 framework-delineated CPFs
+were correctly present on the ground truth map (i.e., user’s accuracy)
+Fig. 4. Maximum annual NDVI maps and associated validation results of field detection for both 2018 and 2000, highlighting correctly detected fields and different
+types of errors. The framework was trained using data from the four sampling regions in 2018 (grey box), with the machine learning model then applied to delineate
+fields across the rest of the region in 2018 and for the entire region of 2000. Center-pivot fields (CPFs) represented circular and fan-shaped fields, while non-CPFs
+represented the union of tree crop plantations and other non-woody crops.
+91
+
+T. Li et al. I S P R S J o u r n a l o f P h o t o g r a m m e t r y a n d R e m o t e S e n s i n g186(2022)83–101
+Table 2 ground truth map in 2018 were not detected by the framework, ac-
+The accuracy for field detection using an object-basis for center-pivot fields counting for 15.2% of the identification errors of CPFs. This type of error
+(CPFs) in 2018 and 2000. CPFs represented circular (Circle) and fan-shaped mainly occurred to small CPFs, CPFs with low NDVI values (Fig. 5b), and
+(Fan) fields. when small CPFs were closely surrounded by large CPFs (Fig. 5g, some
+Ground Truth pixels belonging to smaller CPFs were clustered to the surrounding large
+CPFs, resulting in the small CPFs being misidentified as non-CPFs).
+2018 2000
+Omission errors were mainly caused by 14.5% of the non-CPF pixels
+Circle Fan Circle Fan
+from the ground truth map not being mapped by the framework, which
+Circle 3,636 33 1,626 18
+Framework-delineated map Fan 22 268 7 106 accounted for 77.9% of the omission error. This was due to two main
+reasons. First, non-CPFs consisting of more than 20 pixels on the ground
+Total CPFs on ground truth map 4,009 1,776
+truth map but containing less than 20 pixels on the framework-
+Total CPFs on the framework-delineated 3,983 1,793
+map delineated map were eliminated by the framework (Fig. 5a and b).
+Merged fields on the framework- 1 0 The second reason was the exclusion of low pixels values of NDVI on the
+delineated map framework-delineated map, which might result in (1) a non-CPF on the
+CPFs not detected 16 3
+ground truth map being over-segmented into several subparts each of
+CPFs detected as non-CPFs 33 16
+Non-CPFs detected as CPFs 23 36 which consisting of less than 20 pixels and thus being excluded by the
+Producer’s accuracy 97.4% 97.5% framework, and (2) some non-CPFs, especially for young tree crop
+User’s accuracy 98.0% 96.6% plantations (Fig. 5g) blended into the sandy background and were hence
+
+Producer’s accuracy 97.4% 97.5% framework, and (2) some non-CPFs, especially for young tree crop
+User’s accuracy 98.0% 96.6% plantations (Fig. 5g) blended into the sandy background and were hence
+not identified by the framework. The primary error in the framework-
+(Table 2). The producer’s and user’s accuracy for CPF detection in 2000 delineated map was due to the incorrect identification of non-CPF
+pixels that did not exist on the ground truth map, which accounted for
+was 97.5% and 96.6% (Table 3), respectively, which were similar ac-
+72.4% of the commission errors. This was mainly due to the non-CPFs’
+curacies to those in 2018. Training the machine learning framework on
+detection procedure utilizing a value of 0.15 of NDVI to eliminate bare
+2018 imagery and applying this to the imagery from 2000 suggested
+soil background pixels, resulting in some background pixels surrounding
+good multi-temporal stability of the framework for the same region
+the non-CPFs (with NDVI exceeding 0.15) being identified as part of
+(Fig. 4).
+non-CPFs (pixels in pink color in Fig. 5h).
+The main error for incorrect detection of CPFs in 2018 was due to
+The non-CPF detection accuracies in 2000 were lower than those in
+circular CPFs being identified as fan-shaped CPFs and vice versa, ac-
+2018 (Tables 2 and 3), suggesting a limitation in applying the model
+counting for 52.4% and 69.6% of the omission and commission errors of
+trained in 2018 to other periods in terms of identifying non-CPFs. This
+CPFs in 2018 (Table 2), respectively. CPFs being identified as non-CPFs
+was because the non-CPFs in 2000 appeared more complex with more
+accounted for 31.4% of omission errors, while non-CPFs being identified
+within-field variation than those in 2018, as many crop fields in the
+as CPFs accounted for 29.1% of the commission errors in 2018. Four
+northwestern region were not irrigated by center-pivot systems in 2000.
+main reasons were causing these two types of errors. The first was field
+
+northwestern region were not irrigated by center-pivot systems in 2000.
+main reasons were causing these two types of errors. The first was field
+The 2018-trained framework was not familiar with such conditions,
+size, with fields of less than 50 Landsat pixels precluding shape identi-
+since the main samples representing the non-CPFs in the training dataset
+fication at the 30 m spatial resolution (Fig. 5a and b). Heterogeneity in
+were from plantations in 2018.
+the NDVI values of pixels forming some of the CPFs was another cause.
+Pixels with relatively low NDVI values (e.g., <=0.25) were excluded by A second validation step assessed the delineation accuracy of CPFs at
+the framework, causing misrepresentation of circular/fan-shaped fields
+the pixel level. The median values of Sover, Sunder, Sunion, and IoU errors
+by the remaining pixels >0.25, and were thus incorrectly identified were 1.5% (1.7%), 1.0% (0.5%), 1.4% (1.6%), and 3.5% (3.7%) for 2018
+and 2000 (in brackets), respectively (Fig. 6a), which indicated high
+(Fig. 5e). The third cause was the over-segmentation of fields. In the
+overlap between the estimated fields and ground truth fields. The me-
+example ofFig. 5d, a circular field was divided into, and subsequently
+identified as, two fan-shaped fields. Such over-segmentation error
+dian and the upper quartile of Sover was slightly higher than Sunder,
+suggesting that the framework produced slightly more over-
+occurred for some fields due to the irrigation sprinkler system forming a
+segmentation errors than under-segmentation errors for both years.
+line through the field with low NDVI values and high NDVI gradients,
+The R2 of the acreage of individual fields between the CPFs on the
+which resulted in fields being partitioned into multiple clusters. The
+framework-delineated map and the ground truth map was 0.99 and 0.98
+fourth cause occurred due to under-segmentation, where multiple
+for 2018 and 2000, respectively (Fig. 6b and c). The negative rMBD
+
+framework-delineated map and the ground truth map was 0.99 and 0.98
+fourth cause occurred due to under-segmentation, where multiple
+for 2018 and 2000, respectively (Fig. 6b and c). The negative rMBD
+merged fields were incorrectly identified as fan-shaped fields or non-
+values for both years indicated that the acreage of CPFs was generally
+CPFs (Fig. 5f). This type of error was mainly due to overlapping edge
+under-estimated. This was due to the elimination of pixels with NDVI
+pixels between neighboring fields, which reduced the gradient of NDVI
+values higher than 0.25 (5% lowest NDVI value in each cluster) in the
+values in the adjoining area (as opposed to CPF edge pixels adjoining
+repeated DBSCAN and spectral clustering procedures, which were
+bare ground) and hence prevented field separation. The over-
+mainly pixels along the field boundary. The pixel-level assessment also
+segmentation and under-segmentation errors could also lead to CPFs
+suggested that the model trained using 2018 data performed well in
+being identified as non-CPFs, e.g. if parts of a field or merged fields
+2000 in the same region for delineating the extent of individual CPFs.
+appeared non-circular or non-fan-shaped. In addition, 16 of CPFs on the
+Table 3
+The accuracy for field detection using a pixel-basis for non-center-pivot fields (non-CPFs) in 2018 and 2000.
+2018 2000
+Correctly detected non-CPF pixels 60,352 34,213
+Total non-CPF pixels on ground truth map 74,115 48,081
+Total non-CPF pixels on the framework-delineated map 70,641 41,721
+Non-CPF pixels not detected 10,718 10,709
+Non-CPF pixels detected as CPFs 3,045 3,519
+Non-CPF pixels not present on ground truth map but present on framework delineated map 7,451 5,669
+Producer’s accuracy 81.4% 71.2%
+User’s accuracy 85.4% 82.0%
+92
+
+T. Li et al. I S P R S J o u r n a l o f P h o t o g r a m m e t r y a n d R e m o t e S e n s i n g186(2022)83–101
+Fig. 5. Examples of field identification errors showing (a) small circular center-pivot fields (CPFs) being identified as fan-shaped CPFs and vice versa, and non-CPFs
+present in the ground truth map not being detected by the framework; (b) CPFs and non-CPFs present in the ground truth map but not detected by the framework; (c)
+merged fields and a fan-shaped CPF detected as a circular CPF; (d) a circular CPF being identified as fan-shaped CPF due to over-segmentation; (e) a circular CPF
+being identified as a fan-shaped CPF due to elimination of pixels with low NDVI values; (f) two circular CPFs being identified as a fan-shaped CPF; (g) three small
+circular CPFs and some non-CPFs with low NDVI values not detected by the framework; and (h) non-CPF pixels only on the framework-delineated map or only on the
+ground truth map. CPFs represented circular and fan-shaped center-pivot fields, while non-CPFs represented the union of tree crop plantations and other non-
+woody crops.
+4.2. Mapping agricultural field dynamics from 1988 to 2020 suggested (1) the dominant CPFs had an acreage ranging from 40 to 60
+ha before 2000 and after 2009; (2) from 2000, small CPFs of less than 30
+The framework trained using data from 2018 was applied to delin- ha started to appear; and (3) from 2001 to 2008, the dominant CPF
+eate the fields from 1988 to 2020 using Landsat data (Table 1). There acreage ranged from 60 to 80 ha. Herein, if more than 60% of pixels
+were 45 CPFs detected in 1988, accounting for approximately 20 km2 of forming a CPF observed in one year were also mapped as active in the
+irrigated acreage. A sharp increase was observed in 1993 when 410 year after, the two CPFs were defined as a duplicated field. The acreage
+(230 km2) additional CPFs were detected compared to 1992 (Fig. 7a and bias of duplicated fields that were detected in two consecutive years
+
+(230 km2) additional CPFs were detected compared to 1992 (Fig. 7a and bias of duplicated fields that were detected in two consecutive years
+d). The sharpest increase of CPFs occurred in 2002 with approximately (Fig. 7e) suggested that until 2010, most of the duplicated CPFs
+660 new CPFs detected compared to 2001, resulting in an additional increased in size compared to the previous year. Since 2011, the
+370 km2 of irrigated center-pivot systems (Fig. 7d). A significant duplicated fields were generally shrinking, especially for duplicated
+decrease of CPFs was observed in 2009 (Fig. 7a and d) with the removal CPFs detected in 2019 and 2020, when their field diameter was reduced
+of 517 (374 km2) CPFs compared to 2008. Although around 310 CPFs to cover an acreage of about 10% less.
+were newly created in 2009 compared to 2008, this was the first time Non-CPFs, representing a tree crop plantation or other non-woody
+since 1988 that the overall acreage of CPFs decreased by any significant plant crops, were mainly present in the northwestern region of the
+amount (a reduction of approximately 195 km2). However, from 2010 to study site, with the area increasing from 1988 to 1992 from around 68
+2016 the area of CPFs increased every year, reaching its largest extent in km2 to 145 km2 (Fig. 7b). In 1993, the non-woody non-CPFs started to
+2016, with around 5,080 CPFs covering 2,368 km2. Since 2016, the decrease. On the other hand, a significant increase in tree crop planta-
+number of CPFs started to decrease, with the largest observed reduction tions was observed from 1994 (Fig. 7b). The tree crop plantation acreage
+occurring in 2020. By 2020, the number of CPFs had dropped to around displayed an increasing trend until 2020. The minor fluctuations of the
+3,700, covering an area of 1,581 km2 (Fig. 7a). tree crop plantation acreage before 2010 are likely caused by errors
+
+3,700, covering an area of 1,581 km2 (Fig. 7a). tree crop plantation acreage before 2010 are likely caused by errors
+The median values of CPF acreage ranged from 50 to 60 ha (Fig. 7c), introduced when identifying the non-CPF pixels, especially when the
+which was consistent with the length of the rotating center-pivot sys- trees were young with tree crop pixels appearing with low NDVI values,
+tems covering 800 m in diameter. The width of the violins in Fig. 7c which may the discrimination from background pixels challenging.
+indicated the count of the fields in each acreage range. The result However, such errors will decrease as the trees grow. The largest acreage
+93
+
+T. Li et al. I S P R S J o u r n a l o f P h o t o g r a m m e t r y a n d R e m o t e S e n s i n g186(2022)83–101
+Fig. 6. Delineation accuracy measures for 2018 and 2000 showing: (a) a violin plot of Sover, Sunder, Sunion, and IoU error values; and (b) the scatterplots of the field
+acreage obtained from the ground truth and framework-estimated maps (n =3,994 and 1,773) for the years 2018 and 2000, respectively. The scatterplots were based
+on the center-pivot fields (CPFs) from the ground truth maps, but excluding the CPFs that were not detected by the framework. In (a), Sover and Sunder indicate the
+over-segmentation and under-segmentation errors. Sunion indicates an index computed from the root mean square of Sunder and Sover. IoU error indicates the inter-
+section over union error. In (b) and (c), R2 is the coefficient of determination. MAD indicates the mean absolute bias deviation, with relative MAD subsequently
+shown in the parentheses. rMBD indicates the relative mean bias deviation. The red lines indicate x =y.
+of tree crop plantations was observed in 2020 and covered an area of 51.6%. The field contraction was mainly observed in the central and
+approximately 172 km2. northern parts of the study site, where the fields were primarily created
+To better understand the field dynamics temporally and spatially, the before 2010 (Figs. 8 and 9). A few fields created after 2010 in the
+field expansion and contraction maps were produced by the earliest northeastern region were removed by 2020 (Figs. 8 and 9). The hollow
+detection year and latest detection year (before 2020) of pixels forming circles in Fig. 9 represent the footprint of shrunk fields being observed
+a field. The highest expansion rate of fields was observed for the periods after 2010, where the length of the center-pivot sprinkling system was
+between 1990 and 1995 and 2000–2005, resulting in approximately shortened, causing the field diameter to be reduced. These pixels were
+
+between 1990 and 1995 and 2000–2005, resulting in approximately shortened, causing the field diameter to be reduced. These pixels were
+708 km2 and 1,070 km2 of added acreage (Fig. 8). CPFs contributed to the main reason behind the negative bias of duplicated field acreage
+the majority of the expanding acreage, occupying 82.8% and 95.4% for after 2010 (Fig. 7e).
+the two periods, respectively. The increase of CPFs resulted in a higher A map was produced to understand the number of years within the
+density of CPFs within the central and southern parts of the region time series that a field was active (Fig. 10). A CPF was defined as active
+(green and pink color inFig. 8). The expansion of non-CPFs was pri- within a year if the median of the annual maximum NDVI pixel values
+marily observed in the northwestern region before 1995. After 2005, forming the field exceeded 0.35. A non-CPF was defined as active as long
+additional CPFs mainly occurred in the northeastern area of Al Jawf as it was detected. Then the sum of years that a pixel belonged to an
+(Fig. 8). Contraction of the field acreage occurred mainly after 2015, active field was calculated as the active index map. As can be seen, most
+resulting in a reduction of approximately 1,181 km2 of acreage by the fields were active for a period of 25–30 years (approximate 1,385 km2),
+end of 2020 (Fig. 9), with the removal of CPFs in 2020 contributing followed by 15–20 years (approximate 1,180 km2). Many of the CPFs in
+94
+
+T. Li et al. I S P R S J o u r n a l o f P h o t o g r a m m e t r y a n d R e m o t e S e n s i n g186(2022)83–101
+Fig. 7. Agricultural field dynamics of the Al Jawf region from 1988 to 2020 showing: (a) the acreage (left y-axis) and number (right y-axis) of center-pivot fields
+(CPFs), with blue bars indicating additional fan-shaped CPF; (b) the acreage of non-CPFs, i.e. tree crop plantations and other non-woody crops classified by the
+random forest model; (c) violin plots (with quartiles asdashedlines) showing the distribution of CPF acreage for each year; (d) the newly added/removed acreage
+(left y-axis) and number (right y-axis) of CPFs compared to the previous year; and (e) the relative bias of field acreage of the duplicated fields being detected for two
+consecutive years, which was defined as bias=(Aaf(cid:0) Abf)/Aaf, where af takes its value from [1989, 1990, 1991, …, 2020], bf =af (cid:0) 1, and Aaf and Abf indicated the
+acreage of a duplicated CPF observed in year bf and af. A field was defined as a “duplicated field” if the intersection of the field acreage in consecutive two years (af
+and bf) was ≥0.6 Aaf or 0.6 Abf.
+the central to the southern part of Al Jawf were active for more than 15 5. Discussion
+consecutive years. The CPFs in the northern region were generally
+mapped as being active for less than 15 years, as they were created after The delineation of individual field maps is fundamental to a variety
+2005 (Fig. 8). The non-CPFs occupied by non-woody crops were active of studies, including dynamic field modeling (e.g., crop type classifica-
+for less than 15 years, which was caused by the elimination of non- tion and crop yield forecasting) (Cai et al. 2018), evapotranspiration
+woody crop fields that first appeared from 1993 to the early 2000s modeling (Aragon et al. 2018), water resource management (Lo´pez
+(Fig. 7b). Valencia et al. 2020), as well as in driving and delivering policy and
+
+(Fig. 7b). Valencia et al. 2020), as well as in driving and delivering policy and
+management efforts. The results presented herein advance upon a
+95
+
+T. Li et al. I S P R S J o u r n a l o f P h o t o g r a m m e t r y a n d R e m o t e S e n s i n g186(2022)83–101
+Fig. 8. Agricultural field expansion map. The map was generated by identifying the year that each pixel within an agricultural field was first detected as being active
+by the machine learning framework. The bar plot at the top represents the field acreage, calculated from the point of the first detection of each field in successive 5-
+year periods.
+number of earlier machine-learning applications in terms of delineating 4,762 objects and evaluated against 650 objects. In our study, the
+individual CPFs and identifying the field shape, i.e., circular, fan shape framework was trained using 4,287 objects and evaluated against 5,785
+or other, providing additional insights into field dynamics and charac- CPFs collected across different years. We derived our collected training
+terization. While it is not always meaningful to intercompare results data by labeling the shape of the field candidates and identifying if it
+from studies that have used different data or are based in different lo- consisted of multiple fields, which was an easy and fast process. The
+cations, a broad comparison can provide some insight into relative studies by de Albuquerque et al. (2021a) and de Albuquerque et al.
+performance. In this case, our method showed an advantage in delin- (2021b), which mapped individual CPFs using Mask-RCNN across the
+eating individual fields relative to studies by Zhang et al. (2018) and same region in the study conducted by Carvalho et al. (2021), showed
+Tang et al. (2021b), which identified the location of CPFs without seg- similar limitations in terms of requiring CPF polygons in the training
+menting the extent of individual CPFs, or studies by Graf et al. (2020), stage, which was time-consuming to collect for regions where such data
+Saraiva et al. (2020), and de Albuquerque et al. (2020), which merged were not available.
+
+Saraiva et al. (2020), and de Albuquerque et al. (2020), which merged were not available.
+all CPFs as a single layer map. Carvalho et al. (2021) proposed an The method proposed by Tang et al. (2021a) is perhaps the most
+innovative method using Mask-RCNN to delineate CPFs for three regions similar to our approach. Three modules were implemented in a stepwise
+located in the Cerrado biome, Central Brazil, using seven spectral bands manner, including PVANET, GoogleLeNet, and the Hough transform.
+of Landsat-8 images. The study regions consisted of around 3,730 CPFs PVANET was employed first to detect CPF candidates. In this stage, the
+in 2016. Ground truth data were created based on surveyed vector CPFs were annotated by rectangular boxes in the training dataset.
+polygons masking individual CPFs. Their method was trained using GoogleLeNet was then applied to identify the false detections by
+96
+
+T. Li et al. I S P R S J o u r n a l o f P h o t o g r a m m e t r y a n d R e m o t e S e n s i n g186(2022)83–101
+Fig. 9. Agricultural field contraction map. The map was generated by identifying the year that each pixel within an agricultural field was last detected as being active
+before 2020 by the machine learning framework. The bar plot at the top represents the field acreage of removed fields for different 5-year periods.
+PVANET, with the images labeled to present whether they consisted of distinct approaches performed in different locations and under different
+CPFs or not. The Hough transform was subsequently applied to delineate local conditions. Future efforts may focus on performing a thorough
+the shape of CPFs by identifying the center point and radius of a CPF. intercomparison of machine learning approaches for mapping agricul-
+The framework was applied to map CPFs in Mato Grosso in Brazil using a tural fields in a range of landscapes. Here, we also present the first
+true color image of Sentinel-2 and achieved 95% and 95.5% user’s and analysis of center-pivot dynamics extending over a period of three de-
+producer’s accuracies, respectively. Our method performed slightly cades across a key agricultural region of Saudi Arabia. Future work will
+better than this framework, i.e., 97.4% and 98.8% for user’s and pro- also explore the implementation of the framework to the entirety of
+ducer’s accuracies, respectively, and managed to delineate small CPFs Saudi Arabia to provide a deeper understanding of multi-temporal
+with radii shorter than 200 m and fan-shaped fields. Overall, compared agricultural dynamics in relation to policy initiatives.
+to previous related studies, the proposed method herein showed ad-
+vantages of delineating individual CPFs. For instance, our method pro- 5.1. The benefit of a hybrid framework
+duced high mapping accuracies when evaluated against large datasets
+
+vantages of delineating individual CPFs. For instance, our method pro- 5.1. The benefit of a hybrid framework
+duced high mapping accuracies when evaluated against large datasets
+across different years: even when being trained with limited data. In In our hybrid framework, each of the four machine learning algo-
+addition, observations in the form of field shape and whether an object rithms performed its own function. DBSCAN clustering wasprimarily
+consisted of multiple fields enabled easy and quick generation of used forsegmenting those fields that were geographically separated and
+training data. Importantly, our study presents the first attempt to showed good performance when dealing with this large geospatial
+discriminate between complete CPFs (circular CPFs), incomplete CPFs dataset. However, it was less successful at segmenting neighboring fields
+(fan-shaped CPFs), and non-CPFs representing rectangular shapes (tree with adjoining edges. In these cases, spectral clustering proved to be
+plantation). However, as already noted, it is challenging to intercompare useful but also presented limitations in terms of the requirement for
+97
+
+T. Li et al. I S P R S J o u r n a l o f P h o t o g r a m m e t r y a n d R e m o t e S e n s i n g186(2022)83–101
+Fig. 10. Map showing the number of years that a field was active between 1988 and 2020. A field was defined as active within a year if the median of the annual
+maximum NDVI (normalized differential vegetation index) pixel values forming the field exceeded 0.35. The bar plot at the top shows the acreage of active fields in
+relation to the number of years being active.
+setting the number of clusters and a reduced ability to deal with this shaped CPFs in their center-pivot detection study. CNN classification
+large dataset requiring significantly longer run time. It took less than a is capable of identifying the shape of the field and if a field object
+second on a desktop computer for spectral clustering to segment an consists of multiple fields.
+input field object consisting of three or four CPFs. However, it could take CPFs were primarily covered by non-woody crops, while the non-
+several minutes if the input field object consisted of more than ten CPFs. CPFs might consist of tree crops or non-woody crops, which could suc-
+Using field objects that werepreliminarilysegmented by DBSCAN as cessfully be discriminated by an RF classifier. However, the accuracy of
+input to the spectral clustering considerably reduced the runtime. RF classification was only evaluated using data from sampling region 4
+Indeed, the increased computational complexity of spectral clustering (Fig. 1). We were unable to evaluate the performance of the RF model
+can be a key limitation for employing the technique (Miyahara et al. using the same dataset as evaluating the delineation results (as shown in
+2014). Fig. 4) since no in situ crop type information was provided. The
+The minimal value of the number of clusters is two when running dependence on ground truth data was one of the most significant limi-
+
+The minimal value of the number of clusters is two when running dependence on ground truth data was one of the most significant limi-
+spectral clustering. As such, a procedure was required to identify if a tations of applying any supervised learning approaches in this research.
+field object (obtained from DBSCAN) consisted of a single field or not.
+Spectral clustering should only be run to segment field objects consisting
+5.2. Socio-political drivers of field dynamics
+of multiple fields. In addition, the irregular shape of fields has proven to
+be a challenge for identifying and delineating CPFs (Saraiva et al. 2020;
+The observed increases in center-pivot fields since the 1980s (Fig. 7a
+Zhang et al. 2018). For example, Mekhalfi et al. (2021) excluded fan-
+and b) were largely driven by policies initiated in the early 1970s to
+98
+
+T. Li et al. I S P R S J o u r n a l o f P h o t o g r a m m e t r y a n d R e m o t e S e n s i n g186(2022)83–101
+boost agricultural production and achieve a measure of food self- delineation of fields for the year 2000, allowing subsequent application
+sufficiency (Frenken 2009; Ouda 2014). Likewise, the significant field of this approach across the time series of satellite data. Through this
+acreage reduction observed in 2009 (Fig. 7a and d) was a consequence of analysis, new insights into the number and acreage of fields, along with
+policy initiatives in 2008, which banned the planting of crops such as their increase or decrease on a yearly basis, the expansion and
+wheat and provided incentives to switch to the cultivation of high-value contraction of individual fields through time, and the number of years
+crops such as fruit (Frenken 2009; Ouda 2014). The most recent an individual field was active, were obtained. These results provide
+decrease in field acreage that was observed after 2018 was a manifes- additional insight into important agricultural informatics that may assist
+tation of new regulations in Saudi Arabia to reduce water use in the related studies such as crop type discrimination, yield estimation, water
+agricultural sector due to the current levels of unsustainable use of non- consumption, and other food and water security-related concerns. The
+renewable water resources (Belgiu and Csillik 2018). Based on our work, machine learning algorithms used in this framework provided a largely
+it is predictable that the crop water consumption in Al Jawf since 2018 automated, computationally efficient, and accurate solution to field
+would have significantly decreased due to the removal of CPFs. identification and delineation. Field dynamics obtained from the 33-
+Although the acreage of tree plantations keeps increasing, there is a year Landsat time-series provided a temporal exploration of agricul-
+
+Although the acreage of tree plantations keeps increasing, there is a year Landsat time-series provided a temporal exploration of agricul-
+significant net reduction in agricultural acreage. Our results may sup- tural development in the Al Jawf region, and clearly reflected how
+port decision-makers in determining if implemented policy initiatives various policy initiatives affected field management and production
+have the intended outcome. practices. Future work should focus on exploring potential improve-
+ments to the accuracy of the framework. These may be achieved by: (1)
+5.3. Potential improvements to the framework exploring additional spectral bands and vegetation indices as input; (2)
+developing a self-learning procedure to find the optimal model param-
+Although our results achieved high mapping accuracies, there may eters suited for CPFs with various diameters; and (3) adapting the
+be potential to further improve the processing framework to be adapted framework to identify field types in environments that differ from those
+for other regions. Generally, for machine learning approaches to make a studied herein. By developing and applying this novel temporal analysis
+sustained impact on delivering new and insightful agricultural infor- on high-resolution satellite data, an improved understanding of the
+matics, the transferability of developed approaches needs to be thor- ability of machine learning methods in detecting fields with different
+oughly explored. For instance, the soil background can make it difficult shapes and delineating the extent of the fields has been gained.
+to mask tree crop plantation pixels (Fig. 5h), especially when the tree
+crops are young. Alternative indices considering the soil spectra such as CRediT authorship contribution statement
+the Soil Adjusted Vegetation Index may offer a potential solution (Belgiu
+
+crops are young. Alternative indices considering the soil spectra such as CRediT authorship contribution statement
+the Soil Adjusted Vegetation Index may offer a potential solution (Belgiu
+and Csillik 2018; Napoli et al. 2018) and should be explored in future Ting Li: Conceptualization, Methodology, Validation, Visualization,
+work.The framework parameters were initialized based on the domi- Writing – original draft, Writing – review & editing. Kasper Johansen:
+nant size of the center-pivot fields (800 m in diameter), but this might Methodology, Validation, Writing – review & editing. Matthew F.
+introduce problems when identifying small fields, such as those in the McCabe: Conceptualization, Supervision, Writing – review & editing.
+northwestern region of the study site (Fig. 5a and b). A self-learning
+procedure, such as gradient descent (Waldner and Diakogiannis 2020),
+may be useful to update the parameters automatically during the Declaration of Competing Interest
+learning process. It is also feasible to divide the large satellite image
+scene into several subsets and adjust the framework parameters based The authors declare that they have no known competing financial
+on the field condition that best fit each of the subsets, i.e. dominant interests or personal relationships that could have appeared to influence
+shape and size of fields. This may shorten the runtime of the framework, the work reported in this paper.
+especially when applying the framework to finer scale satellite data such
+as Sentinel-2 or PlanetScope, as the processing can be employed on in- Acknowledgments
+dependent subsets and in parallel by a machine. A reduction of ‘over-
+segmentation errors caused by spectral clustering is an area where Research reported in this publication was supported by the King
+further research is also justified (Nadler and Galun 2007), e.g. by Abdullah University of Science and Technology (KAUST).
+training a CNN model to count the number of fields in a given image.
+
+further research is also justified (Nadler and Galun 2007), e.g. by Abdullah University of Science and Technology (KAUST).
+training a CNN model to count the number of fields in a given image.
+Appendix A. Supplementary material
+6. Conclusions
+Supplementary data to this article can be found online at https://doi.
+A three-decades long spatial and temporal analysis of center-pivot org/10.1016/j.isprsjprs.2022.02.002.
+fields and tree plantations was performed across a major agricultural
+region of Saudi Arabia. Based on a unique processing workflow that
+integrated four machine learning algorithms and exploited a 33-year
+time-series of Landsat imagery, the approach was used to characterize Al-Rumkhani, Y.A., Din, S.U., 2004. Use of remote sensing for irrigation scheduling in
+agricultural field delineation and their multi-temporal dynamics. Re- arid lands of Saudi Arabia. J. Indian Soc. Remote Sens. 32 (2), 225–233.
+Aragon, B., Houborg, R., Tu, K., Fisher, J.B., McCabe, M., 2018. CubeSats enable high
+sults established the high accuracy of the framework for identifying a
+spatiotemporal retrievals of crop-water use for precision agriculture. Remote Sensing
+variety of agricultural field shapes, i.e., circular and fan shape (or 10 (12), 1867. https://doi.org/10.3390/rs10121867.
+neither) and their size, as well as for delineating individual center-pivot Baatz, M., 2000. Multi resolution Segmentation: an optimum approach for high quality
+multi scale image segmentation. In: Beutrage zum AGIT-Symposium. Salzburg,
+fields. Using imagery from 2018, individual center-pivot fields were
+Heidelberg, 2000, pp. 12–23.
+mapped and their shapes classified, resulting in a 97.4% producer’s and Bauder, T.A., 2004. Center pivot irrigation in Colorado as mapped by landsat imagery.
+98.0% user’s accuracy on an object basis. The over-segmentation and Technical bul.(Colorado Agricultural Experiment Station); TB-04-4.
+
+98.0% user’s accuracy on an object basis. The over-segmentation and Technical bul.(Colorado Agricultural Experiment Station); TB-04-4.
+under-segmentation errors were less than 1.5% and the coefficient of Belgiu, M., Csillik, O., 2018. Sentinel-2 cropland mapping using pixel-based and object-
+based time-weighted dynamic time warping analysis. Remote Sens. Environ. 204,
+determination for the field acreage between the delineated center-pivot 509–523.
+fields and ground truth data was 0.99. In terms of identifying non- Belgiu, M., Dra˘gut¸, L., 2016. Random forest in remote sensing: a review of applications
+center-pivot fields, the method achieved 81.4% producer’s and 85.4% and future directions. ISPRS J. Photogramm. Remote Sens. 114, 24–31.
+Bleau, A., Leon, L.J., 2000. Watershed-based segmentation and region merging. Comput.
+user’s accuracy on a pixel basis. A subsequent model trained on 2018 Vis. Image Underst. 77 (3), 317–370.
+data showed high stability when applied to the detection and Breiman, L., 2001. Random forests. Mach. Learn. 45, 5–32.
+99
+
+T. Li et al. I S P R S J o u r n a l o f P h o t o g r a m m e t r y a n d R e m o t e S e n s i n g186(2022)83–101
+Cai, Y., Guan, K., Peng, J., Wang, S., Seifert, C., Wardlow, B., Li, Z., 2018. A high- agriculture at different nomenclature levels using multisource data (simulated
+performance and in-season classification system of field-level crop types using time- Sentinel-2 time series, VHRS and DEM). Remote Sensing 9 (3), 259. https://doi.org/
+series Landsat data and a machine learning approach. Remote Sens. Environ. 210, 10.3390/rs9030259.
+35–47. LeCun, Y., Boser, B., Denker, J.S., Henderson, D., Howard, R.E., Hubbard, W., Jackel, L.
+Calinski, T., Harabasz, J., 1974. A dendrite method for cluster analysis. Commun. Stat.- D., 1989. Backpropagation applied to handwritten zip code recognition. Neural
+Theory Methods 3 (1), 1–27. Comput. 1 (4), 541–551.
+Campello, R.J., Moulavi, D., Sander, J., 2013. Density-based clustering based on Li, Q., Wang, C., Zhang, B., Lu, L., 2015. Object-based crop classification with Landsat-
+hierarchical density estimates. In: Pacific-Asia Conference On Knowledge Discovery MODIS enhanced time-series data. Remote Sensing 7 (12), 16091–16107.
+And Data Mining. Springer, pp. 160–172. Litts, T., Russell, H., Thomas, A., Welch, R., 2001. Mapping irrigated lands in the ACF
+Canny, J., 1986. A computational approach to edge detection. IEEE Trans. Pattern Anal. river basin. In: Georgia Institute of Technology.
+Machine Intell. 679–698. Long, J., Shelhamer, E., Darrell, T., 2015. Fully convolutional networks for semantic
+Carvalho, O.L.F.d., de Carvalho Júnior, O.A., Albuquerque, A.O.d., Bem, P.P.d., Silva, C. segmentation. In: Proceedings of the IEEE conference on computer vision and
+R., Ferreira, P.H.G., Moura, R.D.S.d., Gomes, R.A.T., Guimara˜es, R.F., Borges, D.L., pattern recognition, pp. 3431–3440.
+
+R., Ferreira, P.H.G., Moura, R.D.S.d., Gomes, R.A.T., Guimara˜es, R.F., Borges, D.L., pattern recognition, pp. 3431–3440.
+2021. Instance segmentation for large, multi-channel remote sensing imagery using Lo´pez Valencia, O.M., Johansen, K., Arago´n Solorio, B.J.L., Li, T., Houborg, R.,
+Mask-RCNN and a Mosaicking approach. Remote Sensing 13 (1), 39. https://doi. Malbeteau, Y., AlMashharawi, S., Altaf, M.U., Fallatah, E.M., Dasari, H.P., Hoteit, I.,
+org/10.3390/rs13010039. McCabe, M.F., 2020. Mapping groundwater abstractions from irrigated agriculture:
+Clinton, N., Holt, A., Scarborough, J., Yan, L.i., Gong, P., 2010. Accuracy assessment big data, inverse modeling, and a satellite–model fusion approach. Hydrol. Earth
+measures for object-based image segmentation goodness. Photogramm. Eng. Remote Syst. Sci. 24 (11), 5251–5277.
+Sens 76 (3), 289–299. Masoud, K.M., Persello, C., Tolpekin, V.A., 2020. Delineation of agricultural field
+de Albuquerque, A.O., de Carvalho Júnior, O.A., Carvalho, O.L.F.d., de Bem, P.P., boundaries from Sentinel-2 images using a novel super-resolution contour detector
+Ferreira, P.H.G., de Moura, R.D.S., Silva, C.R., Trancoso Gomes, R.A., Fontes based on fully convolutional networks. Remote Sensing 12 (1), 59. https://doi.org/
+Guimara˜es, R., 2020. Deep semantic segmentation of center pivot irrigation systems 10.3390/rs12010059.
+from remotely sensed data. Remote Sensing 12 (13), 2159. https://doi.org/10.3390/ McInnes, L., Healy, J., Astels, S., 2017. hdbscan: Hierarchical density based clustering.
+rs12132159. J. Open Source Softw. 2 (11), 205. https://doi.org/10.21105/joss10.21105/
+de Albuquerque, A.O., de Carvalho, O.L.F., e Silva, C.R., de Bem, P.P., Trancoso joss.00205.
+Gomes, R.A., Borges, D.L., Guimar˜aes, R.F., Pimentel, C.M.M., de Carvalho Júnior, O. Mekhalfi, M.L., Nicolo`, C., Bazi, Y., Al Rahhal, M.M., Al Maghayreh, E., 2021. Detecting
+
+Gomes, R.A., Borges, D.L., Guimar˜aes, R.F., Pimentel, C.M.M., de Carvalho Júnior, O. Mekhalfi, M.L., Nicolo`, C., Bazi, Y., Al Rahhal, M.M., Al Maghayreh, E., 2021. Detecting
+A., 2021a. Instance segmentation of center pivot irrigation systems using multi- crop circles in google earth images with mask R-CNN and YOLOv3. Appl. Sci. 11 (5),
+temporal SENTINEL-1 SAR images. Remote Sens. Appl.: Soc. Environ. 23, 100537. 2238. https://doi.org/10.3390/app11052238.
+https://doi.org/10.1016/j.rsase.2021.100537. Melton, F.S., Johnson, L.F., Lund, C.P., Pierce, L.L., Michaelis, A.R., Hiatt, S.H.,
+de Albuquerque, A.O., de Carvalho, O.L.F., Silva, C.R.e., Luiz, A.S., de Bem, P.P., Guzman, A., Adhikari, D.D., Purdy, A.J., Rosevelt, C., Votava, P., Trout, T.J.,
+Gomes, R.A.T., Guimaraes, R.F., Junior, O.A.d.C., 2021b. Dealing with clouds and Temesgen, B., Frame, K., Sheffner, E.J., Nemani, R.R., 2012. Satellite irrigation
+seasonal changes for center pivot irrigation systems detection using instance management support with the terrestrial observation and prediction system: A
+segmentation in sentinel-2 time series. IEEE J. Sel. Top. Appl. Earth Obs. Remote framework for integration of satellite and surface observations to support
+Sens. 14, 8447–8457. improvements in agricultural water resource management. IEEE J. Sel. Top. Appl.
+Dhillon, I.S., Guan, Y., Kulis, B., 2004. Kernel k-means, spectral clustering and Earth Obs. Remote Sens. 5 (6), 1709–1721.
+on Knowledge discovery and data mining, pp. 551–556. Springer, pp. 111–126.
+Duro, D.C., Franklin, S.E., Dub´e, M.G., 2012. A comparison of pixel-based and object- Miyahara, S., Komazaki, Y., Miyamoto, S., 2014. An algorithm combining spectral
+based image analysis with selected machine learning algorithms for the classification clustering and DBSCAN for core points. Knowledge and Systems Engineering.
+of agricultural landscapes using SPOT-5 HRG imagery. Remote Sens. Environ. 118, Springer, pp. 21–28.
+
+of agricultural landscapes using SPOT-5 HRG imagery. Remote Sens. Environ. 118, Springer, pp. 21–28.
+259–272. Mueller, M., Segl, K., Kaufmann, H., 2004. Edge-and region-based segmentation
+Ester, M., Kriegel, H.-P., Sander, J., Xu, X., 1996. A density-based algorithm for technique for the extraction of large, man-made objects in high-resolution satellite
+discovering clusters in large spatial databases with noise. In: Kdd, pp. 226–231. imagery. Pattern Recogn. 37 (8), 1619–1628.
+Famiglietti, J.S., 2014. The global groundwater crisis. Nat. Clim. Change 4 (11), Nadler, B., Galun, M., 2007. Fundamental limitations of spectral clustering. In: Advances
+945–948. in neural information processing systems, pp. 1017–1024.
+Fao, 2013. Global map of irrigation areas - Saudi Arabia. Food and Agriculture Napoli, C., Wise, B., Wogan, D., Yaseen, L., 2018. Policy options for reducing water for
+Organization of the United Nations, Rome. agriculture in Saudi Arabia. In: Assessing Global Water Megatrends. Springer,
+Ferrara, R., Virdis, S.G.P., Ventura, A., Ghisu, T., Duce, P., Pellizzaro, G., 2018. An pp. 211–230.
+automated approach for wood-leaf separation from terrestrial LIDAR point clouds Ng, A.Y., Jordan, M.I., Weiss, Y., 2002. On spectral clustering: Analysis and an algorithm.
+using the density based clustering algorithm DBSCAN. Agric. For. Meteorol. 262, In: Advances in neural information processing systems, pp. 849–856.
+434–444. Olson, D.L., Delen, D., 2008. Performance evaluation for predictive modeling. In:
+Ferreira, E., Toledo, J.H.d., Dantas, A.A.A., Pereira, R.M., 2011. Cadastral maps of Advanced Data Mining Techniques. Springer Berlin Heidelberg, Berlin, Heidelberg,
+irrigated areas by center pivots in the State of Minas Gerais, using CBERS-2B/CCD pp. 137–147. https://doi.org/10.1007/978-3-540-76917-0_9.
+satellite imaging. Engenharia Agrícola 31 (4), 771–780. Ouda, O.K.M., 2014. Impacts of agricultural policy on irrigation water demand: a case
+
+satellite imaging. Engenharia Agrícola 31 (4), 771–780. Ouda, O.K.M., 2014. Impacts of agricultural policy on irrigation water demand: a case
+Frenken, K., 2009. Irrigation in the Middle East region in figures AQUASTAT Survey- study of Saudi Arabia. Int. J. Water Resour. Dev. 30 (2), 282–292.
+2008. Water Reports. Pastor, A.V., Palazzo, A., Havlik, P., Biemans, H., Wada, Y., Obersteiner, M., Kabat, P.,
+Garcia-Garcia, A., Orts-Escolano, S., Oprea, S., Villena-Martinez, V., Martinez- Ludwig, F., 2019. The global nexus of food–trade–water sustaining environmental
+Gonzalez, P., Garcia-Rodriguez, J., 2018. A survey on deep learning techniques for flows by 2050. Nat. Sustainability 2 (6), 499–507.
+image and video semantic segmentation. Appl. Soft Comput. 70, 41–65. Pedregosa, F., Varoquaux, G., Gramfort, A., Michel, V., Thirion, B., Grisel, O.,
+Goodfellow, I., Bengio, Y., Courville, A., 2016. Deep Learning. MIT Press. Blondel, M., Prettenhofer, P., Weiss, R., Dubourg, V., 2011. Scikit-learn: machine
+Graesser, J., Ramankutty, N., 2017. Detection of cropland field parcels from Landsat learning in Python. J. Mach. Learn. Res. 12, 2825–2830.
+imagery. Remote Sens. Environ. 201, 165–180. Pen˜a, J., Guti´errez, P., Herva´s-Martínez, C., Six, J., Plant, R., Lo´pez-Granados, F., 2014.
+Graf, L., Bach, H., Tiede, D., 2020. Semantic segmentation of sentinel-2 imagery for Object-based image classification of summer crops with machine learning methods.
+mapping irrigation center pivots. Remote Sensing 12 (23), 3937. https://doi.org/ Remote Sensing 6 (6), 5019–5041.
+10.3390/rs12233937. Persello, C., Tolpekin, V.A., Bergado, J.R., de By, R.A., 2019. Delineation of agricultural
+GASTAT, 2018. Agricultural Area Cultivated and Production by Type of Crop, Statistical fields in smallholder farms from satellite images using fully convolutional networks
+Yearbook of 2018. and combinatorial grouping. Remote Sens. Environ. 231, 111253. https://doi.org/
+
+Yearbook of 2018. and combinatorial grouping. Remote Sens. Environ. 231, 111253. https://doi.org/
+He, K., Zhang, X., Ren, S., Sun, J., 2015. Delving deep into rectifiers: Surpassing human- 10.1016/j.rse.2019.111253.
+level performance on imagenet classification. In: Proceedings of the IEEE Phalke, A.R., O¨ zdog˘an, M., Thenkabail, P.S., Erickson, T., Gorelick, N., Yadav, K.,
+international conference on computer vision, pp. 1026–1034. Congalton, R.G., 2020. Mapping croplands of Europe, middle east, russia, and
+Hinton, G.E., Srivastava, N., Krizhevsky, A., Sutskever, I., Salakhutdinov, R.R., 2012. central asia using landsat, random forest, and google earth engine. ISPRS J.
+Improving neural networks by preventing co-adaptation of feature detectors. arXiv Photogramm. Remote Sens. 167, 104–122.
+preprint arXiv:1207.0580. Radiuk, P.M., 2017. Impact of training set batch size on the performance of
+Hopfield, J.J., 1982. Neural networks and physical systems with emergent collective convolutional neural networks for diverse datasets. Inf. Technol. Manage. Sci. 20,
+computational abilities. Proc. Natl. Acad. Sci. 79 (8), 2554–2558. 20–24.
+Huang, L., Luo, J., Lin, Z., Niu, F., Liu, L., 2020. Using deep learning to map retrogressive Raileanu, L.E., Stoffel, K., 2004. Theoretical comparison between the gini index and
+thaw slumps in the Beiluhe region (Tibetan Plateau) from CubeSat images. Remote information gain criteria. Ann. Math. Artif. Intell. 41 (1), 77–93.
+Sens. Environ. 237, 111534. https://doi.org/10.1016/j.rse.2019.111534. Rodriguez-Galiano, V.F., Chica-Olmo, M., Abarca-Hernandez, F., Atkinson, P.M.,
+Johansen, K., Lopez, O., Tu, Y.-H., Li, T., McCabe, M.F., 2021. Center pivot field Jeganathan, C., 2012a. Random Forest classification of Mediterranean land cover
+delineation and mapping: A satellite-driven object-based image analysis approach using multi-seasonal imagery and multi-seasonal texture. Remote Sens. Environ.
+
+delineation and mapping: A satellite-driven object-based image analysis approach using multi-seasonal imagery and multi-seasonal texture. Remote Sens. Environ.
+for national scale accounting. ISPRS J. Photogramm. Remote Sens. 175, 1–19. 121, 93–107.
+Krizhevsky, A., Sutskever, I., Hinton, G.E., 2012. Imagenet classification with deep Rodriguez-Galiano, V.F., Ghimire, B., Rogan, J., Chica-Olmo, M., Rigol-Sanchez, J.P.,
+convolutional neural networks. In: Advances in neural information processing 2012b. An assessment of the effectiveness of a random forest classifier for land-cover
+systems, pp. 1097–1105. classification. ISPRS J. Photogramm. Remote Sens. 67, 93–104.
+Lebourgeois, V., Dupuy, S., Vintrou, E´ ., Ameline, M., Butler, S., B´egu´e, A., 2017.
+A combined random forest and OBIA classification scheme for mapping smallholder
+100
+
+T. Li et al. I S P R S J o u r n a l o f P h o t o g r a m m e t r y a n d R e m o t e S e n s i n g186(2022)83–101
+Ronneberger, O., Fischer, P., Brox, T., 2015. U-net: Convolutional networks for Tang, J., Zhang, Z., Zhao, L., Tang, P., 2021b. Increasing shape bias to improve the
+biomedical image segmentation. In: International Conference on Medical image precision of center pivot irrigation system detection. Remote Sensing 13 (4), 612.
+computing and computer-assisted intervention. Springer, pp. 234–241. https://doi.org/10.3390/rs13040612.
+Rousseeuw, P.J., 1987. Silhouettes: a graphical aid to the interpretation and validation of Tao, S., Wu, F., Guo, Q., Wang, Y., Li, W., Xue, B., Hu, X., Li, P., Tian, D.i., Li, C., Yao, H.,
+cluster analysis. J. Comput. Appl. Math. 20, 53–65. Li, Y., Xu, G., Fang, J., 2015. Segmenting tree crowns from terrestrial and mobile
+Ruder, S., 2016. An overview of gradient descent optimization algorithms. arXiv preprint LiDAR data by exploring ecological theories. ISPRS J. Photogramm. Remote Sens.
+arXiv:1609.04747. 110, 66–76.
+Rundquist, D.C., Hoffman, R.O., Carlson, M.P., Cook, A.E., 1989. Nebraska center-pivot Tung, F., Wong, A., Clausi, D.A., 2010. Enabling scalable spectral clustering for image
+inventory: an example of operational satellite remote sensing on a long-term basis. segmentation. Pattern Recogn. 43 (12), 4069–4076.
+Photogramm. Eng. Remote Sens. 55, 587–590. Turker, M., Kok, E.H., 2013. Field-based sub-boundary extraction from remote sensing
+Rydberg, A., Borgefors, G., 2001. Integrated method for boundary delineation of imagery using perceptual grouping. ISPRS J. Photogramm. Remote Sens. 79,
+agricultural fields in multispectral satellite images. IEEE Trans. Geosci. Remote Sens. 106–121.
+39 (11), 2514–2520. Vermote, E., Justice, C., Claverie, M., Franch, B., 2016. Preliminary analysis of the
+´
+
+39 (11), 2514–2520. Vermote, E., Justice, C., Claverie, M., Franch, B., 2016. Preliminary analysis of the
+´
+Saraiva, M., Protas, E., Salgado, M., Souza Jr, C., 2020. Automatic mapping of center performance of the Landsat 8/OLI land surface reflectance product. Remote Sens.
+pivot irrigation systems from satellite images using deep learning. Remote Sensing Environ. 185, 46–56.
+12, 558. Vieira, M.A., Formaggio, A.R., Renno´, C.D., Atzberger, C., Aguiar, D.A., Mello, M.P.,
+Schaffer, C., 1993. Selecting a classification method by cross-validation. Mach. Learn. 13 2012. Object Based Image Analysis and Data Mining applied to a remotely sensed
+(1), 135–143. Landsat time-series to map sugarcane over large areas. Remote Sens. Environ. 123,
+Scheffler, D., Hollstein, A., Diedrich, H., Segl, K., Hostert, P., 2017. AROSICS: an 553–562.
+automated and robust open-source image co-registration software for multi-sensor von Luxburg, U., 2007. A tutorial on spectral clustering. Stat. Comput. 17 (4), 395–416.
+satellite data. Remote Sensing 9 (7), 676. https://doi.org/10.3390/rs9070676. Waldner, F., Diakogiannis, F.I., 2020. Deep learning on edge: extracting field boundaries
+Schmidhuber, J., 2015. Deep learning in neural networks: An overview. Neural Netw. 61, from satellite images with a convolutional neural network. Remote Sens. Environ.
+85–117. 245, 111741. https://doi.org/10.1016/j.rse.2020.111741.
+Schmidt, G., Jenkerson, C.B., Masek, J., Vermote, E., Gao, F., 2013. Landsat ecosystem Watkins, B., van Niekerk, A., 2019. A comparison of object-based image analysis
+disturbance adaptive processing system (LEDAPS) algorithm description. In: US approaches for field boundary delineation using multi-temporal Sentinel-2 imagery.
+Geological Survey. Comput. Electron. Agric. 158, 294–302.
+Seth, N.M., 2015. Analyzing the increase in center pivot irrigation systems in Custer Xia, X., Liang, H., RongFeng, Y., Kun, Y., 2018. Oil tank extraction in high-resolution
+
+Seth, N.M., 2015. Analyzing the increase in center pivot irrigation systems in Custer Xia, X., Liang, H., RongFeng, Y., Kun, Y., 2018. Oil tank extraction in high-resolution
+County, Nebraska USA from 2003 to 2010. Pap. Resour. Anal. 17, 15. remote sensing images based on deep learning. In: 2018 26th International
+Shi, J., Malik, J., 2000. Normalized cuts and image segmentation. Departmental Papers Conference on Geoinformatics. IEEE, pp. 1–6.
+(CIS) 107. Yan, L., Roy, D.P., 2016. Conterminous United States crop field size quantification from
+Simonyan, K., Zisserman, A., 2014. Very deep convolutional networks for large-scale multi-temporal Landsat data. Remote Sens. Environ. 172, 67–86.
+image recognition. arXiv preprint arXiv:1409.1556. Yan, L., Roy, D.P., 2014. Automated crop field extraction from multi-temporal Web
+Song, X., Wang, J., Huang, W., Liu, L., Yan, G., Pu, R., 2009. The delineation of Enabled Landsat Data. Remote Sens. Environ. 144, 42–64.
+agricultural management zones with high resolution remotely sensed data. Precis. Zhang, C., Yue, P., Di, L., Wu, Z., 2018. Automatic identification of center pivot irrigation
+Agric. 10 (6), 471–487. systems from landsat images using convolutional neural networks. Agriculture 8
+Tan, P.-N., Steinbach, M., Kumar, V., 2006. Cluster analysis: basic concepts and (10), 147. https://doi.org/10.3390/agriculture8100147.
+algorithms. Introd. Data Min. 8, 526–533. Zhang, X., Jiao, L., Liu, F., Bo, L., Gong, M., 2008. Spectral clustering ensemble applied to
+Tang, J., Arvor, D., Corpetti, T., Tang, P., 2021a. Mapping center pivot irrigation systems SAR image segmentation. IEEE Trans. Geosci. Remote Sens. 46 (7), 2126–2136.
+in the Southern Amazon from sentinel-2 images. Water 13 (3), 298. https://doi.org/ Zhao, W., Yang, H., Shen, Z., Luo, J., 2015. Oil tanks extraction from high resolution
+10.3390/w13030298. imagery using a directional and weighted hough voting method. J. Indian Soc.
+Remote Sens. 43 (3), 539–549.
+101
+
